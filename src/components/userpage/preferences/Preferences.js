@@ -10,9 +10,8 @@ import List from '@material-ui/core/List'
 import Divider from '@material-ui/core/Divider'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import Switch from '@material-ui/core/Switch'
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 
 import PreferencesStore from './PreferencesStore'
 import PreferencesActions from './PreferencesActions'
@@ -23,10 +22,7 @@ const styles = theme => ({
   drawerPaper: {
     position: 'absolute',
     top: 64
-  },
-  nested: {
-   paddingLeft: theme.spacing.unit * 4
- }
+  }
 })
 
 class Preferences extends React.Component {
@@ -47,7 +43,6 @@ class Preferences extends React.Component {
 
   getDrawerContent = () => {
     const { preferences } = this.state
-    const { classes } = this.props
     return (
       <List>
       {Object.entries(preferences).map(([key, value]) => (
@@ -58,28 +53,28 @@ class Preferences extends React.Component {
                 {this.state.toggled[key] ? <ExpandLess /> : <ExpandMore />}
               </IconButton>
             </ListItemIcon>
-            <ListItemIcon>
-              {Icons[key]}
-            </ListItemIcon>
-            <ListItemText primary={toTitleCase(key)} />
-            <ListItemSecondaryAction>
-              <Switch
-                onChange={this.handleSwitchChange(key)}
-                checked={this.getCategoryChecked(key)}
-                value={key} />
-            </ListItemSecondaryAction>
+            <FormControlLabel
+              control={
+                <Switch
+                  onChange={this.handleSwitchChange(key)}
+                  checked={this.getCategoryChecked(key)}
+                  value={key} />
+              }
+              label={toTitleCase(key)} />
+            {Icons[key]}
           </ListItem>
           <Collapse in={this.state.toggled[key]}  timeout='auto' unmountOnExit>
-            <List component='div' className={classes.nested}>
+            <List component='div' disablePadding>
               {Object.entries(value).map(([key, value]) => (
-                <ListItem key={`${key} li`} >
-                  <ListItemText primary={toTitleCase(key)} />
-                  <ListItemSecondaryAction>
-                    <Switch
-                      onChange={this.handleSwitchChange(key)}
-                      checked={value}
-                      value={key} />
-                  </ListItemSecondaryAction>
+                <ListItem key={`${key} li`}>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        onChange={this.handleSwitchChange(key)}
+                        checked={value}
+                        value={key} />
+                      }
+                    label={toTitleCase(key)} />
                 </ListItem>
               ))}
             </List>

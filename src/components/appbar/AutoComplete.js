@@ -148,17 +148,15 @@ class AutoComplete extends React.Component {
 
   componentDidMount () {
     SearchAppBarStore.on('change', this.updateState)
-    this._isMounted = true
   }
 
   componentWillUnmount () {
     SearchAppBarStore.removeListener('change', this.updateState)
-    this._isMounted = false
   }
 
   updateState = () => {
     const { searchQuery } = SearchAppBarStore.getState()
-    this._isMounted && this.setState({ searchQuery })
+    this.setState({ searchQuery })
   }
 
   handleSuggestionsFetchRequested = ({ value }) => {

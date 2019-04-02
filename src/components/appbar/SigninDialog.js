@@ -13,6 +13,7 @@ import TextField from '@material-ui/core/TextField'
 
 import SearchAppBarStore from './SearchAppBarStore'
 import SearchAppBarActions from './SearchAppBarActions'
+import AppStore from '../AppStore'
 import LoginStates from '../../utils/LoginStates'
 
 const styles = theme => ({
@@ -40,23 +41,23 @@ const styles = theme => ({
 class SigninDialog extends React.Component {
   constructor (props) {
     super(props)
-    const { signin, login } = SearchAppBarStore.getState()
-    this.state = { signin, login }
+    const { signin } = SearchAppBarStore.getState()
+    this.state = signin
   }
 
   componentDidMount () {
     SearchAppBarStore.on('change', this.updateState)
-    this._isMounted = true
+    AppStore.on('change', this.updateState)
   }
 
   componentWillUnmount () {
     SearchAppBarStore.removeListener('change', this.updateState)
-    this._isMounted = false
+    AppStore.removeListener('change', this.updateState)
   }
 
   updateState = () => {
-    const { signin, login } = SearchAppBarStore.getState()
-    this._isMounted && this.setState({ signin, login })
+    this.setState(SearchAppBarStore.getState().signin)
+    this.setState(AppStore.getState())
   }
 
   updateUsername = event => SearchAppBarActions.signinDialogEmailChange(event.target.value)
@@ -69,18 +70,17 @@ class SigninDialog extends React.Component {
 
   cancel = () => SearchAppBarActions.signinDialogCancel()
 
-  validate = () => this.state.signin.username && this.state.signin.password
+  validate = () => this.state.username && this.state.password
 
   doLogin = () => {
     SearchAppBarActions.signinDialogSigninStart({
-      username: this.state.signin.username,
-      password: this.state.signin.password
+      username: this.state.username,
+      password: this.state.password
     })
   }
 
   render () {
-    const { loggedInState } = this.state.login
-    const { open, dialogText, username, password } = this.state.signin
+    const { open, loggedInState, dialogText, username, password} = this.state
     return (
       <Dialog
         open={open && loggedInState !== LoginStates.loggedIn}

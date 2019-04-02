@@ -26,18 +26,15 @@ class SearchBarCenter extends React.Component {
 
   componentDidMount () {
     SearchAppBarStore.on('change', this.updateState)
-    this._isMounted = true
-
   }
 
   componentWillUnmount () {
     SearchAppBarStore.removeListener('change', this.updateState)
-    this._isMounted = false
   }
 
   updateState = () => {
     const { travelDate } = SearchAppBarStore.getState()
-    this._isMounted && this.setState({ travelDate })
+    this.setState({ travelDate })
   }
 
   handleDateChange = date => SearchAppBarActions.landingSearchbarDateChange(date)
@@ -65,7 +62,7 @@ class SearchBarCenter extends React.Component {
           <AutoComplete page='landing' />
         </div>
         <div className={classes.container}>
-          <Button variant="contained" color="primary" className={classes.button} onClick={this.handleSubmit}>
+          <Button variant="contained" color="primary" className={classes.button} onClick={(e) => this.handleSubmit(e)}>
             Search
           </Button>
         </div>

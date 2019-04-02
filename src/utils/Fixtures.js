@@ -6,7 +6,6 @@ import bahen from '../images/bahen.jpg'
 import ripleysaquarium from '../images/ripleysaquarium.jpg'
 import steves from '../images/steves.jpg'
 import hashimoto from '../images/hashimoto.jpg'
-import defaultProfilePicture from '../images/defaultProfilePicture.png'
 
 // this is a js file containing all of the hardcoded data which will come from the server in phase 2
 const privileges = {
@@ -20,21 +19,14 @@ const users = [
     privilege: privileges.user,
     password: 'user',
     fullName: 'Denny Wiseman',
-    location: 'Toronto, ON',
-    birthday: Date.now(),
-    profilePicture: defaultProfilePicture,
-    description: 'This is a description. I am awesome.'
+    birthday: ''
   },
   {
     username: 'admin',
     privilege: privileges.admin,
     password: 'admin',
-    fullName: 'Grace Deng',
-    location: 'Toronto, ON',
-    birthday: Date.now(),
-    profilePicture: defaultProfilePicture,
-    description: 'This is a description. I am awesome.'
-
+    fullName: 'Charlie Zhang',
+    birthday: ''
   }
 ]
 

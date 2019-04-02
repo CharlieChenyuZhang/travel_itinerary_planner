@@ -23,7 +23,7 @@ class UserPage extends React.Component {
     const { classes } = this.props
     return (
       <div>
-        <SearchAppBar page='userPage' />
+        <SearchAppBar />
         <div className={classes.userpage}>
           <Preferences className={classes.hidden} />
           <Recommendations />

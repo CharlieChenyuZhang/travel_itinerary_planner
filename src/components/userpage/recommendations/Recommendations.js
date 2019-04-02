@@ -31,7 +31,7 @@ const styles = theme => ({
 class Recommendations extends React.Component {
   constructor () {
     super()
-    this.state = RecommendationsStore.getState()
+    this.state = {}
   }
 
   componentDidMount () {
@@ -45,39 +45,36 @@ class Recommendations extends React.Component {
   }
 
   updateState = () => {
-    const { recommendations, loading } = RecommendationsStore.getState()
+    const { recommendations } = RecommendationsStore.getState()
     const { preferences } = PreferencesStore.getState()
-    this.setState({ recommendations, loading, preferences })
+    this.setState({ recommendations, preferences })
   }
 
-  filterRecommendations () {
-    const { preferences, recommendations } = this.state
+  filterRecommendations () { // note: not really flux-y
+    const { preferences } = this.state
     if (!preferences) return RecommendationsStore.getState().recommendations
-    return recommendations.filter(rec => preferences[rec.category.category][rec.category.subcategory])
+    return RecommendationsStore.getState().recommendations.filter(rec => (
+      preferences[rec.category][rec.subcategory]
+    ))
   }
-
-
 
   render () {
     const { classes } = this.props
-    const { loading=false } = this.state
-
-    return loading
-    ? <h5>Loading...</h5>
-    : <div className={classes.root}>
+    return (
+      <div className={classes.root}>
         <GridList
           cols={1}
           cellHeight={359}
           className={classes.gridList}
           spacing={10}>
-          {this.filterRecommendations().map((venue) => {
+          {this.filterRecommendations().map(rec => {
             const short = shortid.generate()
-            venue.id = short
-            return <Recommendation data={venue} key={short} />
-          })
-        }
+            rec.id = short
+            return (<Recommendation data={rec} key={short} />)
+          })}
         </GridList>
       </div>
+    )
   }
 }
 

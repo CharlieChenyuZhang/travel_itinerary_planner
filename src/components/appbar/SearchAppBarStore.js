@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events'
 import dispatcher from '../../utils/Dispatcher'
-import LoginStates from '../../utils/LoginStates'
+
 import ActionTypes from '../../utils/ActionTypes'
 
 class SearchAppBarStore extends EventEmitter {
@@ -8,15 +8,10 @@ class SearchAppBarStore extends EventEmitter {
     super()
     this.searchQuery = ''
     this.travelDate = new Date()
-    this.login = {
-      loggedInState: LoginStates.noInput,
-      privilege: 0
-    }
     this.signin = {
       open: false,
       username: '',
-      password: '',
-      dialogText: ''
+      password: ''
     }
     this.createAccount = {
       open: false,
@@ -25,14 +20,8 @@ class SearchAppBarStore extends EventEmitter {
       password2: '',
       birthday: null,
       fullName: '',
-      hasClickedSubmit: false,
-      duplicate: false,
-      snackbarOpen: false
+      hasClickedSubmit: false
     }
-    this.userProfile = {
-      open: false
-    }
-    // this.user = null
   }
 
   getState () {
@@ -40,10 +29,7 @@ class SearchAppBarStore extends EventEmitter {
       searchQuery: this.searchQuery,
       createAccount: this.createAccount,
       signin: this.signin,
-      travelDate: this.travelDate,
-      userProfile: this.userProfile,
-      login: this.login,
-      // user: this.user
+      travelDate: this.travelDate
     }
   }
 
@@ -57,17 +43,8 @@ class SearchAppBarStore extends EventEmitter {
       }
 
       case ActionTypes.CREATE_ACCOUNT_CANCEL: {
-        this.createAccount = {
-          open: false,
-          username: '',
-          password: '',
-          password2: '',
-          birthday: null,
-          fullName: '',
-          hasClickedSubmit: false,
-          duplicate: false,
-          snackbarOpen: this.createAccount.snackbarOpen
-        }
+        this.createAccount.open = false
+        this.createAccount.hasClickedSubmit = false
         this.emit('change')
         break
       }
@@ -80,19 +57,6 @@ class SearchAppBarStore extends EventEmitter {
 
       case ActionTypes.CREATE_ACCOUNT_CLICK_SUBMIT: {
         this.createAccount.hasClickedSubmit = true
-        this.createAccount.duplicate = false
-        this.emit('change')
-        break
-      }
-
-      case ActionTypes.CREATE_ACCOUNT_DUPLICATE_ACCOUNT: {
-        this.createAccount.duplicate = true
-        this.emit('change')
-        break
-      }
-
-      case ActionTypes.CREATE_ACCOUNT_CONFIRM_TOGGLE: {
-        this.createAccount.snackbarOpen = action.value
         this.emit('change')
         break
       }
@@ -107,10 +71,8 @@ class SearchAppBarStore extends EventEmitter {
         this.signin = {
           open: false,
           username: '',
-          password: '',
-          dialogText: ''
+          password: ''
         }
-        this.login.loggedInState = LoginStates.noInput
         this.emit('change')
         break
       }
@@ -129,30 +91,6 @@ class SearchAppBarStore extends EventEmitter {
 
       case ActionTypes.SIGNIN_DIALOG_SIGNIN_SUCCESS: {
         this.signin.open = false
-        this.signin.dialogText = 'Logged in!'
-        this.login = {
-          loggedInState: LoginStates.loggedIn,
-          username: action.value.username,
-          privilege: action.value.privilege
-        }
-        // this.user = action.value
-        // delete this.user.status
-        // delete this.user.__v
-        // delete this.user._id
-        this.emit('change')
-        break
-      }
-
-      case ActionTypes.SIGNIN_DIALOG_USERNAME_NOT_FOUND: {
-        this.login.loggedInState = LoginStates.usernameNotFound
-        this.signin.dialogText = 'Username not found.'
-        this.emit('change')
-        break
-      }
-
-      case ActionTypes.SIGNIN_DIALOG_INVALID_PASSWORD: {
-        this.login.loggedInState = LoginStates.incorrectPassword
-        this.signin.dialogText = 'Incorrect password. Did you forget your password?'
         this.emit('change')
         break
       }
@@ -161,10 +99,8 @@ class SearchAppBarStore extends EventEmitter {
         this.signin = {
           open: false,
           username: '',
-          password: '',
-          dialogText: 'Please input your user information below.'
+          password: ''
         }
-        this.login.loggedInState = LoginStates.noInput
         this.emit('change')
         break
       }
@@ -185,45 +121,6 @@ class SearchAppBarStore extends EventEmitter {
         this.emit('change')
         break
       }
-
-      case ActionTypes.APPBAR_USER_PROFILE_OPEN: {
-        this.userProfile.open = true
-        this.emit('change')
-        break
-      }
-
-      case ActionTypes.APPBAR_USER_PROFILE_CLOSE: {
-        this.userProfile.open = false
-        this.emit('change')
-        break
-      }
-
-      case ActionTypes.USERPROFILE_DELETE_ACCOUNT: {
-        this.signin = {
-          open: false,
-          username: '',
-          password: '',
-          dialogText: ''
-        }
-        this.login.loggedInState = LoginStates.noInput
-        this.emit('change')
-        break
-      }
-
-      // case ActionTypes.ITINERARY_SAVE_SUCCESS: {
-      //   this.user.itineraries.push(action.value)
-      //   this.emit('change')
-      //   break
-      // }
-      //
-      // case ActionTypes.UPDATE_USER: {
-      //   this.user = action.value
-      //   delete this.user.status
-      //   delete this.user.__v
-      //   delete this.user._id
-      //   this.emit('change')
-      //   break
-      // }
 
       default:
     }

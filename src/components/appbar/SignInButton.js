@@ -2,30 +2,28 @@ import React from 'react'
 import Button from '@material-ui/core/Button'
 
 import LoginStates from '../../utils/LoginStates'
-import SearchAppBarStore from './SearchAppBarStore'
+import AppStore from '../AppStore'
 import SearchAppBarActions from './SearchAppBarActions'
 
 export default class SignInButton extends React.Component {
   constructor () {
     super()
-    this.state = { buttonText: this.getButtonText(SearchAppBarStore.getState().login.loggedInState)}
+    this.state = { buttonText: this.getButtonText(AppStore.getState().loggedInState)}
   }
 
   componentDidMount () {
-    SearchAppBarStore.on('change', this.updateState)
-    this._isMounted = true
+    AppStore.on('change', this.updateState)
   }
 
   componentWillUnmount () {
-    SearchAppBarStore.removeListener('change', this.updateState)
-    this._isMounted = false
+    AppStore.removeListener('change', this.updateState)
   }
 
-  getButtonText = (status) => status === LoginStates.loggedIn
+  getButtonText = (loginStatus) => loginStatus === LoginStates.loggedIn
       ? 'Sign out'
       : 'Sign in'
 
-  updateState = () => this._isMounted && this.setState({ buttonText: this.getButtonText(SearchAppBarStore.getState().login.loggedInState) })
+  updateState = () => this.setState({ buttonText: this.getButtonText(AppStore.getState().loggedInState) })
   render () {
     const { buttonText } = this.state
     return (

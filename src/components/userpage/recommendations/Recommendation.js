@@ -10,8 +10,6 @@ import CardActions from '@material-ui/core/CardActions'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
 import InfoIcon from '@material-ui/icons/Info'
-import Collapse from '@material-ui/core/Collapse';
-import Typography from '@material-ui/core/Typography'
 
 import UserActions from '../UserActions'
 
@@ -20,7 +18,7 @@ const styles = theme => ({
     borderRadius: theme.shape.borderRadius,
     cursor: 'move',
     width: 450,
-    //height: 359,
+    height: 359,
     marginBottom: 20
   },
   titleBar: {
@@ -64,19 +62,13 @@ const collect = (connect, monitor) => ({
 })
 
 class Recommendation extends React.Component {
-  constructor () {
-    super()
-    this.state = { expanded: false }
-  }
-
-  toggleInfo = () => this.setState({ expanded: this.state.expanded })
-  handleRemove = () => UserActions.removeRecommendation(this.props.data.id)
+  handleClick = () => UserActions.removeRecommendation(this.props.data.id)
 
   render () {
     const { classes, data } = this.props
-    const { title, address, price, opens, closes, image, description, pluralName } = data
-    const hours = opens === closes ? 'Business hours not found.' : `Open from ${opens} until ${closes}`
-    const cost = price > 0 ? '$'.repeat(price) : 'Price not found.'
+    const { title, address, price, opens, closes, image } = data
+    const hours = opens === closes ? 'Open 24 hours' : `Open from ${opens} until ${closes}`
+    const cost = price > 0 ? '$'.repeat(price) : 'Free'
 
     const { connectDragSource, isDragging } = this.props
     return (
@@ -89,10 +81,7 @@ class Recommendation extends React.Component {
             className: classes.title
           }}
           action={
-            <IconButton
-              className={classes.icon}
-              onClick={this.toggleInfo}
-              >
+            <IconButton className={classes.icon}>
               <InfoIcon />
             </IconButton>
           }
@@ -104,12 +93,6 @@ class Recommendation extends React.Component {
           image={image}
           title={title}
         />
-        <Collapse in={this.state.expanded} timeout='auto' unmountOnExit>
-          <CardContent>
-            <Typography variant="h5" component="h2">{pluralName}</Typography>
-            <Typography paragraph><i>{description}</i></Typography>
-          </CardContent>
-        </Collapse>
         <div className={classes.columns}>
           <CardContent>
             {address} <br/>
@@ -118,7 +101,7 @@ class Recommendation extends React.Component {
           <CardActions>
             <Button
               className={classes.ignoreButton}
-              onClick={this.handleRemove}>
+              onClick={this.handleClick}>
               IGNORE
             </Button>
           </CardActions>
