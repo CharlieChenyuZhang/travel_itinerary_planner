@@ -2,6 +2,9 @@ import dispatcher from '../../../utils/Dispatcher'
 import ActionTypes from '../../../utils/ActionTypes'
 import { postItinerary, patchItinerary } from '../../../utils/ServerMethods'
 
+import RecommendationsStore from '../recommendations/RecommendationsStore'
+import ItineraryStore from './ItineraryStore'
+
 const ItineraryActions = {
   addEvent (event) {
     dispatcher.dispatch({
@@ -18,8 +21,18 @@ const ItineraryActions = {
   },
 
   clearItinerary () {
-    dispatcher.dispatch({
-      type: ActionTypes.ITINERARY_CLEAR
+  	 const eventsCopy = ItineraryStore.getState().events.slice()
+  	 const recs = RecommendationsStore.getState().recommendations.map(r => r.title)
+    
+    eventsCopy.forEach((existingEvent) => {
+    	this.removeEvent(existingEvent.id)
+    	
+    	if (!recs.includes(existingEvent.data.title)) {
+	     dispatcher.dispatch({
+          type: ActionTypes.RECOMMENDATION_ADD,
+          value: existingEvent.data
+        })
+      }
     })
   },
 
