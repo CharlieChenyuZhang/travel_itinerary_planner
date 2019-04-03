@@ -4,6 +4,7 @@ import ActionTypes from '../../../utils/ActionTypes'
 import traverse from 'traverse'
 import { foursquare } from '../../../utils/Utils'
 import groupedCategories from '../../../utils/GroupedCategories'
+import RecommendationsStore from './RecommendationsStore'
 
 const RecommendationActions = {
   startLoad (city, date) {
@@ -29,7 +30,8 @@ const RecommendationActions = {
     })
   },
   removeRecommendation (id) {
-    RecommendationActions.getOneRecommendationFromFoursquare(this.fetchedRecommendations)
+  	 const {fetchedRecommendations} = RecommendationsStore.getState()
+    RecommendationActions.getOneRecommendationFromFoursquare(fetchedRecommendations)
       .then(venues => (
         // RecommendationActions.formatVenues(venues))) // For release
         RecommendationActions.formatVenuesBasic(venues)))// For testing
