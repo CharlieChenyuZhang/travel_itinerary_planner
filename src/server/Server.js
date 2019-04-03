@@ -4,11 +4,14 @@ const { mongoose } = require('./Mongoose')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const { ObjectID } = require('mongodb')
+const fs = require('fs')
+const jwt = require('jsonwebtoken')
 
 // make some models and import em
 const { User } = require('./models/User')
 
 const app = express()
+const issuer = 'Team38SecurityHQ'
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -104,7 +107,7 @@ app.patch('/users', authenticate, (req, res) => {
       if (!user) res.status(404).send()
       else res.send(user)
     })
-    .catch((error) => {console.log("returned error: ", error); res.status(500).send(error)}) // FIXME: 
+    .catch((error) => {console.log("returned error: ", error); res.status(500).send(error)}) // FIXME:
 })
 
 app.delete('/users', authenticate, (req, res) => {
