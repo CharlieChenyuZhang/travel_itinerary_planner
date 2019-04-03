@@ -29,7 +29,7 @@ const RecommendationActions = {
       value: event
     })
   },
-  removeRecommendation (id) {
+  removeRecommendation (title) {
   	 const {fetchedRecommendations} = RecommendationsStore.getState()
     RecommendationActions.getOneRecommendationFromFoursquare(fetchedRecommendations)
       .then(venues => (
@@ -38,7 +38,7 @@ const RecommendationActions = {
       .then((formattedVenues) => (
         dispatcher.dispatch({
           type: ActionTypes.RECOMMENDATION_REMOVE,
-          value: { id, formattedVenues }
+          value: { title, formattedVenues }
         })
       ))
       .catch((err) => console.log(err)) // TODO: SOMETHING BETTER WITH ERRORS
@@ -57,7 +57,6 @@ const RecommendationActions = {
         .then((result) => {
           result.json().then(json => {
             const items = json.response.groups[0].items
-            this.fetchedRecommendations += 10
             resolve(items.map(item => item.venue))
           })
         })
@@ -75,7 +74,6 @@ const RecommendationActions = {
         .then((result) => {
           result.json().then(json => {
             const items = json.response.groups[0].items
-            this.fetchedRecommendations += 1
             resolve(items.map(item => item.venue))
           })
         })

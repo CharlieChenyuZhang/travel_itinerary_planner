@@ -3,6 +3,7 @@ import ActionTypes from '../../../utils/ActionTypes'
 import { postItinerary, patchItinerary } from '../../../utils/ServerMethods'
 
 import RecommendationsStore from '../recommendations/RecommendationsStore'
+import RecommendationActions from '../recommendations/RecommendationActions'
 import ItineraryStore from './ItineraryStore'
 
 const ItineraryActions = {
@@ -54,6 +55,15 @@ const ItineraryActions = {
     dispatcher.dispatch({
       type: ActionTypes.ITINERARY_LOAD,
       value: itinerary
+    })
+    
+    const eventsCopy = ItineraryStore.getState().events.slice()
+  	 const recs = RecommendationsStore.getState().recommendations.map(r => r.title)
+  	 
+  	 eventsCopy.forEach((existingEvent) => {
+    	if (recs.includes(existingEvent.data.title)) {
+	     RecommendationActions.removeRecommendation(existingEvent.data.title)
+      }
     })
   },
 

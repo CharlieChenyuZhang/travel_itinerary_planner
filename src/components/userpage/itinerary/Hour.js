@@ -18,7 +18,7 @@ const hourTarget = {
     })
     const { existingEvent } = ItineraryStore.getState()
     existingEvent && RecommendationActions.addRecommendation(existingEvent) // Adds a replaced event back to Recommendations from Itinerary
-    RecommendationActions.removeRecommendation(data.id)
+    RecommendationActions.removeRecommendation(data.title)
   }
 }
 

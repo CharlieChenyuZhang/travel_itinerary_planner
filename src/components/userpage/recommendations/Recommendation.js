@@ -70,7 +70,7 @@ class Recommendation extends React.Component {
   }
 
   toggleInfo = () => this.setState(state => ({expanded: !state.expanded}))
-  handleRemove = () => RecommendationActions.removeRecommendation(this.props.data.id)
+  handleRemove = () => RecommendationActions.removeRecommendation(this.props.data.title)
 
   render () {
     const { classes, data } = this.props
