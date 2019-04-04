@@ -29,8 +29,7 @@ const RecommendationActions = {
       value: event
     })
   },
-  removeRecommendation (title) {
-  	 const {fetchedRecommendations} = RecommendationsStore.getState()
+  removeRecommendation (title, fetchedRecommendations) {
     RecommendationActions.getOneRecommendationFromFoursquare(fetchedRecommendations)
       .then(venues => (
         // RecommendationActions.formatVenues(venues))) // For release

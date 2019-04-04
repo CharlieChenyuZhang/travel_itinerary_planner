@@ -21,15 +21,13 @@ const ItineraryActions = {
     })
   },
 
-  clearItinerary () {
-  	 const eventsCopy = ItineraryStore.getState().events.slice()
-  	 const recs = RecommendationsStore.getState().recommendations.map(r => r.title)
-    
+  clearItinerary (events, recommendations) {
+    const eventsCopy = events.slice()
+    const recs = recommendations.map(r => r.title)
     eventsCopy.forEach((existingEvent) => {
-    	this.removeEvent(existingEvent.id)
-    	
-    	if (!recs.includes(existingEvent.data.title)) {
-	     dispatcher.dispatch({
+      this.removeEvent(existingEvent.id)
+      if (!recs.includes(existingEvent.data.title)) {
+        dispatcher.dispatch({
           type: ActionTypes.RECOMMENDATION_ADD,
           value: existingEvent.data
         })
@@ -51,20 +49,19 @@ const ItineraryActions = {
     })
   },
 
-  async loadItinerary (itinerary) {
+  async loadItinerary (value) {
     dispatcher.dispatch({
       type: ActionTypes.ITINERARY_LOAD,
-      value: itinerary
+      value
     })
-    
-    const eventsCopy = ItineraryStore.getState().events.slice()
-  	 const recs = RecommendationsStore.getState().recommendations.map(r => r.title)
-  	 
-  	 for (const existingEvent of eventsCopy) {
-    	if (recs.includes(existingEvent.data.title)) {
-	     await RecommendationActions.removeRecommendation(existingEvent.data.title)
+
+    const eventsCopy = value.itinerary.events.slice()
+    const recs = value.rec.recommendations.map(r => r.title)
+    await Promise.all(eventsCopy.map(async (existingEvent) => {
+      if (recs.includes(existingEvent.data.title)) {
+        await RecommendationActions.removeRecommendation(existingEvent.data.title, value.rec.fetchedRecommendations)
       }
-    }
+    }))
   },
 
   patchItineraryChanges (id, name, events) {
