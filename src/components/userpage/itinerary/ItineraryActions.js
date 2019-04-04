@@ -51,7 +51,7 @@ const ItineraryActions = {
     })
   },
 
-  loadItinerary (itinerary) {
+  async loadItinerary (itinerary) {
     dispatcher.dispatch({
       type: ActionTypes.ITINERARY_LOAD,
       value: itinerary
@@ -60,11 +60,11 @@ const ItineraryActions = {
     const eventsCopy = ItineraryStore.getState().events.slice()
   	 const recs = RecommendationsStore.getState().recommendations.map(r => r.title)
   	 
-  	 eventsCopy.forEach((existingEvent) => {
+  	 for (const existingEvent of eventsCopy) {
     	if (recs.includes(existingEvent.data.title)) {
-	     RecommendationActions.removeRecommendation(existingEvent.data.title)
+	     await RecommendationActions.removeRecommendation(existingEvent.data.title)
       }
-    })
+    }
   },
 
   patchItineraryChanges (id, name, events) {
