@@ -5,7 +5,7 @@ import traverse from 'traverse'
 import { foursquare } from '../../../utils/Utils'
 import groupedCategories from '../../../utils/GroupedCategories'
 
-const RecommendationActions = {
+const RecommendationsActions = {
   startLoad (city, date) {
     this.city = city
     this.date = new Date(date).getDay()
@@ -28,15 +28,15 @@ const RecommendationActions = {
       value: event
     })
   },
-  removeRecommendation (id) {
-    RecommendationActions.getOneRecommendationFromFoursquare(this.fetchedRecommendations)
+  removeRecommendation (title, fetchedRecommendations) {
+    RecommendationsActions.getOneRecommendationFromFoursquare(fetchedRecommendations)
       .then(venues => (
-        // RecommendationActions.formatVenues(venues))) // For release
-        RecommendationActions.formatVenuesBasic(venues)))// For testing
+        // RecommendationsActions.formatVenues(venues))) // For release
+        RecommendationsActions.formatVenuesBasic(venues)))// For testing
       .then((formattedVenues) => (
         dispatcher.dispatch({
           type: ActionTypes.RECOMMENDATION_REMOVE,
-          value: { id, formattedVenues }
+          value: { title, formattedVenues }
         })
       ))
       .catch((err) => console.log(err)) // TODO: SOMETHING BETTER WITH ERRORS
@@ -55,7 +55,6 @@ const RecommendationActions = {
         .then((result) => {
           result.json().then(json => {
             const items = json.response.groups[0].items
-            this.fetchedRecommendations += 10
             resolve(items.map(item => item.venue))
           })
         })
@@ -73,7 +72,6 @@ const RecommendationActions = {
         .then((result) => {
           result.json().then(json => {
             const items = json.response.groups[0].items
-            this.fetchedRecommendations += 1
             resolve(items.map(item => item.venue))
           })
         })
@@ -161,4 +159,4 @@ const RecommendationActions = {
   }
 }
 
-export default RecommendationActions
+export default RecommendationsActions

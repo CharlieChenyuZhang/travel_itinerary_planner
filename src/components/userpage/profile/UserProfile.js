@@ -11,10 +11,10 @@ import { MuiPickersUtilsProvider, DatePicker } from 'material-ui-pickers'
 import DateFnsUtils from '@date-io/date-fns'
 import { format } from 'date-fns'
 
-// import ResetPWButton from './ResetPWButton'
 import PasswordDialog from './PasswordDialog.js'
 import DeleteAccountButton from './DeleteAccountButton'
 import SubmitButton from './SubmitButton'
+import ResetPasswordButton from './ResetPasswordButton'
 import ConfirmDeleteDialog from './ConfirmDeleteDialog'
 import ConfirmSnackbar from './ConfirmSnackbar'
 import UserProfileActions from './UserProfileActions'
@@ -23,6 +23,7 @@ import SearchAppBar from '../../appbar/SearchAppBar'
 import ItinerariesDisplay from './itineraries/ItinerariesDisplay'
 import RenameItineraryDialog from './itineraries/RenameItineraryDialog'
 import ProfilePicChooser from '../../appbar/ProfilePicChooser'
+import Autocomplete from '../../appbar/AutoComplete'
 
 const styles = theme => ({
   header: {
@@ -156,14 +157,7 @@ class UserProfile extends React.Component {
               className={classes.textField}
             />
           </MuiPickersUtilsProvider>
-          <TextField
-            multiline
-            label='Location'
-            value={user.location}
-            className={classes.textField}
-            margin='normal'
-            onChange={(event) => UserProfileActions.editLocation(event.target.value)}
-          />
+          <Autocomplete page='userProfile' searchQuery={user.location}/>
           <TextField
             multiline
             label='Description'
@@ -175,12 +169,8 @@ class UserProfile extends React.Component {
           <ItinerariesDisplay itineraries={itineraries} expanded={expandedPanel}/>
           <div className={classes.actions}>
             <DeleteAccountButton />
+            <ResetPasswordButton />
             <SubmitButton user={user} />
-            <Button
-              color='primary'
-              onClick={() => UserProfileActions.changePWDialogOpen()}>
-              Reset Password*
-            </Button>
           </div>
         </div>
         <ConfirmDeleteDialog open={deleteDialogOpen}/>

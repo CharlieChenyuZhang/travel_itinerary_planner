@@ -95,16 +95,10 @@ app.get('/users/:username/:password', (req, res) => {
 })
 
 app.patch('/users', authenticate, (req, res) => {
-  const id = req.session.userid
-  if (!ObjectID.isValid(id)) {
-    return res.status(404).send()
-  }
-
   const { username, fullName, password, birthday, location, description, profilePicture } = req.body
-  const properties = { username, fullName, password, birthday, location, description, profilePicture }
-
-  // should use req.body._id instead of id here
-  User.findByIdAndUpdate((req.body._id || id), { $set: properties }, { new: true })
+  const properties = { username, fullName, birthday, location, description, profilePicture }
+  password && (properties.password = User.encryptPassword(password))
+  User.findByIdAndUpdate((req.body._id || req.user.id), { $set: properties }, { new: true })
     .then((user) => {
       if (!user) res.status(404).send()
       else res.send(user)
@@ -113,7 +107,7 @@ app.patch('/users', authenticate, (req, res) => {
 })
 
 app.delete('/users', authenticate, (req, res) => {
-  const id = req.body._id
+  const id = req.body._id || req.user._id // req.body for admin, req.user._id for user
   if (!ObjectID.isValid(id)) {
     return res.status(404).send()
   }

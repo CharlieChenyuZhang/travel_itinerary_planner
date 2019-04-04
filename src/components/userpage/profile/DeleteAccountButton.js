@@ -18,7 +18,7 @@ class DeleteAccountButton extends React.Component {
         variant='contained'
         color='secondary'
         className={classes.root}
-        onClick={() => UserProfileActions.toggleDeleteAccountDialog()}>
+        onClick={() => UserProfileActions.toggleDeleteAccountDialog(true)}>
         Delete Account
       </Button>
     )

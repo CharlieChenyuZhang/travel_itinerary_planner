@@ -23,13 +23,12 @@ class UserProfileStore extends EventEmitter {
 
   getState () {
     return {
-      // user: this.user,
+      user: this.user,
       deleteDialogOpen: this.deleteDialogOpen,
       snackbarOpen: this.snackbarOpen,
       showEditProfilePictureButton: this.showEditProfilePictureButton,
       showProfilePictureDialog: this.showProfilePictureDialog,
       renameItineraryDialog: this.renameItineraryDialog,
-      user: this.newUser,
       expandedPanel: this.expandedPanel,
       changePW: this.changePW
     }
@@ -98,7 +97,7 @@ class UserProfileStore extends EventEmitter {
       }
 
       case ActionTypes.USERPROFILE_TOGGLE_DELETE_ACCOUNT_DIALOG: {
-        this.deleteDialogOpen = !this.deleteDialogOpen
+        this.deleteDialogOpen = action.value
         this.emit('change')
         break
       }
