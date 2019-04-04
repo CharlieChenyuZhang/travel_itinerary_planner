@@ -4,14 +4,16 @@ const { mongoose } = require('./Mongoose')
 const bodyParser = require('body-parser')
 const session = require('express-session')
 const { ObjectID } = require('mongodb')
-const fs = require('fs')
+const { checkToken } = require('./jwtMiddleware')
 const jwt = require('jsonwebtoken')
+const fs = require('fs')
+const privateKEY = fs.readFileSync('./private.key', 'utf8')
+
 
 // make some models and import em
 const { User } = require('./models/User')
 
 const app = express()
-const issuer = 'Team38SecurityHQ'
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -170,9 +172,29 @@ app.post('/users/login', (req, res) => {
   const { username, password } = req.body
   User.findByUsernamePassword(username, password)
     .then((user) => {
+      const token = jwt.sign({ userid: user._id, password: user.password }, privateKEY, { expiresIn: '24h' })
       req.session.userid = user._id
       req.session.username = user.username
-      res.send(user)
+      res.send({ user, token })
+    })
+    .catch((error) => {
+      if (error.message.includes('404')) res.status(404).send(error)
+      else if (error.message.includes('403')) res.status(403).send(error)
+      else res.status(500).send()
+    })
+})
+
+app.get('/users/login/token/:token', (req, res) => {
+  const token = req.params.token
+  !token && res.status(400).send()
+  const decoded = jwt.decode(token)
+  !decoded && res.status(400).send()
+  const { userid, password } = decoded
+  User.findByUseridPassword(userid, password)
+    .then((user) => {
+      req.session.userid = userid
+      req.session.username = user.username
+      res.send({ user })
     })
     .catch((error) => {
       if (error.message.includes('404')) res.status(404).send(error)

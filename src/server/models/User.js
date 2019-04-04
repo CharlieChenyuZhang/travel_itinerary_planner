@@ -61,6 +61,19 @@ UserSchema.statics.findByUsernamePassword = function (username, password) {
     })
 }
 
+UserSchema.statics.findByUseridPassword = function (id, password) {
+  const User = this
+  return User.findById(id)
+    .then((user) => {
+      if (!user) return Promise.reject(Error(`404 userid ${id} not found.`))
+      return new Promise((resolve, reject) => {
+        password === user.password
+          ? resolve(user)
+          : reject(Error('403 invalid password'))
+      })
+    })
+}
+
 UserSchema.pre('save', function (next) {
   const user = this
   if (user.isModified('password')) {

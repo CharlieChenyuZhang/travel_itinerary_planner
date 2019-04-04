@@ -17,7 +17,7 @@ const deleteItinerary = (id) => {
   return fetch(`/users/itineraries/${id}`, {
     method: 'DELETE'
   })
-    .then((res) => res.json()) // new user, itinerary that was removed
+    .then((res) => res.json())
 }
 
 const patchItinerary = (id, name, events) => {
@@ -72,10 +72,8 @@ const patchUser = (user) => {
       'Content-Type': 'application/json'
     }
   })
-    .then((res) => res.json()) // TODO: improve
-    .catch((error) => {
-      console.log(error)
-    })
+    .then((res) => res.json())
+    .catch((error) => console.log(error))
 }
 
 const deleteUser = (user) => {
@@ -87,10 +85,16 @@ const deleteUser = (user) => {
       'Content-Type': 'application/json'
     }
   })
-    .then((res) => res.json()) // TODO: improve
-    .catch((error) => {
-      console.log(error)
-    })
+    .then((res) => res.json())
+    .catch((error) => console.log(error))
+}
+
+const tokenLogin = (token) => {
+  return fetch(`/users/login/token/${token}`)
+    .then((res) => (
+      res.json()
+        .then((json) => ({ status: res.status, ...json }))
+    ))
 }
 
 const login = (user) => {
@@ -104,14 +108,19 @@ const login = (user) => {
   })
     .then((res) => (
       res.json()
-        .then((json) => ({ status: res.status, ...json }))
+        .then((json) => {
+          window.localStorage.setItem('token', json.token)
+          return { status: res.status, ...json.user }
+        })
     ))
-    //.catch((err) => err)
 }
 
 const logout = () => {
   return fetch('/users/logout')
-    .then((res) => res.status)
+    .then((res) => {
+      window.localStorage.removeItem('token')
+      return res.status
+    })
 }
 
-export { postUser, getUser, login, logout, patchUser, postItinerary, deleteItinerary, patchItinerary, getAllUsers, getUsersByName, deleteUser }
+export { postUser, getUser, tokenLogin, login, logout, patchUser, postItinerary, deleteItinerary, patchItinerary, getAllUsers, getUsersByName, deleteUser }

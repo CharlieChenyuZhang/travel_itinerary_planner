@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Route, Switch, Redirect } from 'react-router-dom'
 
-// import AppStore from './AppStore'
 import SearchAppBarStore from './appbar/SearchAppBarStore'
 import LoginStates from '../utils/LoginStates'
 import Landing from './landing/Landing'

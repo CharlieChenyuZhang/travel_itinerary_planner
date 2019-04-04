@@ -1,9 +1,40 @@
 import dispatcher from '../../utils/Dispatcher'
 import ActionTypes from '../../utils/ActionTypes'
-import { postUser, login, logout } from '../../utils/ServerMethods'
+import { postUser, login, logout, tokenLogin } from '../../utils/ServerMethods'
 import RecommendationActions from '../userpage/recommendations/RecommendationActions'
 
 const SearchAppBarActions = {
+  tokenLogin (token, travelDate, searchQuery) {
+    tokenLogin(token)
+      .then((res) => {
+        let type, value
+        switch (res.status) {
+          case 200: {
+            type = ActionTypes.SIGNIN_DIALOG_SIGNIN_SUCCESS
+            value = { ...res }
+            dispatcher.dispatch({
+              type: ActionTypes.UPDATE_USER,
+              value: res
+            })
+            RecommendationActions.startLoad(searchQuery, travelDate)
+            break
+          }
+          case 404: {
+            type = ActionTypes.SIGNIN_DIALOG_USERNAME_NOT_FOUND
+            break
+          }
+          case 403: {
+            type = ActionTypes.SIGNIN_DIALOG_INVALID_PASSWORD
+            break
+          }
+          default: {
+            console.log('internal server error' + res.status)
+          }
+        }
+        dispatcher.dispatch({ type, value })
+      })
+  },
+
   clickSubmit () {
     dispatcher.dispatch({
       type: ActionTypes.CREATE_ACCOUNT_CLICK_SUBMIT

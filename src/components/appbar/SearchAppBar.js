@@ -92,6 +92,10 @@ class SearchAppBar extends React.Component {
   componentDidMount () {
     SearchAppBarStore.on('change', this.updateState)
     PreferencesStore.on('change', this.updateState)
+    const { page } = this.props
+    const { searchQuery, travelDate } = this.state
+    const token = window.localStorage.getItem('token')
+    page === 'landing' && token && SearchAppBarActions.tokenLogin(token, travelDate, searchQuery)
     this._isMounted = true
   }
 
