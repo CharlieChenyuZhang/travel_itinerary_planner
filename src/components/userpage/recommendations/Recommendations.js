@@ -1,13 +1,12 @@
 import React from 'react'
 import shortid from 'shortid'
-
 import GridList from '@material-ui/core/GridList'
 import { withStyles } from '@material-ui/core/styles'
 
 import Recommendation from './Recommendation'
+import RecommendationsActions from './RecommendationsActions'
 import RecommendationsStore from './RecommendationsStore'
 import PreferencesStore from '../preferences/PreferencesStore'
-
 
 const styles = theme => ({
   root: {
@@ -31,7 +30,10 @@ const styles = theme => ({
 class Recommendations extends React.Component {
   constructor () {
     super()
-    this.state = {}
+    this.state = {
+      loading: true,
+      recommendations: []
+    }
   }
 
   componentDidMount () {
@@ -45,36 +47,37 @@ class Recommendations extends React.Component {
   }
 
   updateState = () => {
-    const { recommendations } = RecommendationsStore.getState()
+    const { recommendations, loading } = RecommendationsStore.getState()
     const { preferences } = PreferencesStore.getState()
-    this.setState({ recommendations, preferences })
+    this.setState({ recommendations, loading, preferences })
   }
 
-  filterRecommendations () { // note: not really flux-y
-    const { preferences } = this.state
+  filterRecommendations () {
+    const { preferences, recommendations } = this.state
     if (!preferences) return RecommendationsStore.getState().recommendations
-    return RecommendationsStore.getState().recommendations.filter(rec => (
-      preferences[rec.category][rec.subcategory]
-    ))
+    return recommendations.filter(rec => preferences[rec.category.category][rec.category.subcategory])
   }
 
   render () {
     const { classes } = this.props
-    return (
-      <div className={classes.root}>
+    const { loading=false } = this.state
+
+    return loading
+    ? <h5>Loading...</h5>
+    : <div className={classes.root}>
         <GridList
           cols={1}
           cellHeight={359}
           className={classes.gridList}
           spacing={10}>
-          {this.filterRecommendations().map(rec => {
+	         { this.filterRecommendations().map((venue) => {
             const short = shortid.generate()
-            rec.id = short
-            return (<Recommendation data={rec} key={short} />)
-          })}
+            venue.id = short
+            return <Recommendation data={venue} key={short} />
+          })
+        }
         </GridList>
       </div>
-    )
   }
 }
 

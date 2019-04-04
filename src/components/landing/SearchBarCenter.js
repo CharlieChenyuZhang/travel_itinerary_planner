@@ -21,27 +21,30 @@ const styles = theme => ({
 class SearchBarCenter extends React.Component {
   constructor (props) {
     super(props)
-    this.state = { travelDate: new Date() }
+    this.state = { travelDate: new Date(), searchQuery: '' }
   }
 
   componentDidMount () {
     SearchAppBarStore.on('change', this.updateState)
+    this._isMounted = true
+
   }
 
   componentWillUnmount () {
     SearchAppBarStore.removeListener('change', this.updateState)
+    this._isMounted = false
   }
 
   updateState = () => {
-    const { travelDate } = SearchAppBarStore.getState()
-    this.setState({ travelDate })
+    const { travelDate, searchQuery } = SearchAppBarStore.getState()
+    this._isMounted && this.setState({ travelDate, searchQuery })
   }
 
   handleDateChange = date => SearchAppBarActions.landingSearchbarDateChange(date)
   handleSubmit = event => SearchAppBarActions.signinDialogOpen()
   render () {
     const { classes } = this.props
-    const { travelDate } = this.state
+    const { travelDate, searchQuery } = this.state
 
     return (
       <div className={classes.root}>
@@ -59,10 +62,10 @@ class SearchBarCenter extends React.Component {
           </MuiPickersUtilsProvider>
         </div>
         <div className={classes.container}>
-          <AutoComplete page='landing' />
+          <AutoComplete page='landing' searchQuery={searchQuery}/>
         </div>
         <div className={classes.container}>
-          <Button variant="contained" color="primary" className={classes.button} onClick={(e) => this.handleSubmit(e)}>
+          <Button variant="contained" color="primary" className={classes.button} onClick={this.handleSubmit}>
             Search
           </Button>
         </div>

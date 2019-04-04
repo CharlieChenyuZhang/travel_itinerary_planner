@@ -8,20 +8,23 @@ import { withStyles } from '@material-ui/core/styles'
 import MenuIcon from '@material-ui/icons/Menu'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
 import PublicOutlined from '@material-ui/icons/PublicOutlined'
+import { Redirect } from 'react-router-dom'
 
 import SearchAppBarStore from './SearchAppBarStore'
 import PreferencesStore from '../userpage/preferences/PreferencesStore'
-import AppStore from '../AppStore'
 import SearchAppBarActions from './SearchAppBarActions'
 import PreferencesActions from '../userpage/preferences/PreferencesActions'
 import SignInButton from './SignInButton'
 import CreateAccountButton from './CreateAccountButton'
+import UserProfileButton from './UserProfileButton'
+import ConfirmAccountCreateSnackbar from './ConfirmAccountCreateSnackbar'
+import ItineraryButton from './ItineraryButton'
 import AutoComplete from './AutoComplete'
+import { LoginStates } from '../../utils/Utils'
 
 const styles = theme => ({
   root: {
     width: '100%',
-    zIndex: 1300
   },
   grow: {
     flexGrow: 1
@@ -52,7 +55,6 @@ const styles = theme => ({
       width: 'auto'
     }
   },
-
   searchIcon: {
     width: theme.spacing.unit * 9,
     height: '100%',
@@ -84,58 +86,48 @@ class SearchAppBar extends React.Component {
   constructor (props) {
     super(props)
     this.classes = props.classes
-    this.state = Object.assign({}, AppStore.getState(), PreferencesStore.getState().open, SearchAppBarStore.getState())
+    this.state = { open: true, ...SearchAppBarStore.getState() } // prefererences will be open by default
   }
 
   componentDidMount () {
     SearchAppBarStore.on('change', this.updateState)
     PreferencesStore.on('change', this.updateState)
-    AppStore.on('change', this.updateState)
-
+    this._isMounted = true
   }
 
   componentWillUnmount () {
     SearchAppBarStore.removeListener('change', this.updateState)
     PreferencesStore.removeListener('change', this.updateState)
-    AppStore.removeListener('change', this.updateState)
-  }
-
-  handleChange = event => {
-    SearchAppBarActions.searchbarChange(event.target.value)
-  }
-
-  handleSubmit = event => {
-    if ((event.keyCode && event.keyCode === 13) || event.type === 'click') {
-      SearchAppBarActions.searchbarSearch(this.state.searchQuery)
-    }
+    this._isMounted = false
   }
 
   toggleDrawer = () => {
-    const { open, loggedInState } = this.state
-    loggedInState === 'loggedIn'&& (open ? PreferencesActions.close() : PreferencesActions.open())
+    const { open, login } = this.state
+    login.loggedInState === LoginStates.loggedIn && (open ? PreferencesActions.close() : PreferencesActions.open())
   }
 
   updateState = () => {
-    const { loggedInState, searchQuery, open} = Object.assign({}, AppStore.getState(), SearchAppBarStore.getState(), PreferencesStore.getState())
-    this.setState({ loggedInState, searchQuery, open })
+    const { login, searchQuery, open, createAccount: { snackbarOpen }, travelDate } = {...SearchAppBarStore.getState(), ...PreferencesStore.getState()}
+    this._isMounted && this.setState({ login, searchQuery, open, snackbarOpen, travelDate })
   }
 
   render () {
-    const { classes } = this.props
-    const { page } = this.props
-    const { loggedInState, open } = this.state
-    const isLoggedIn = loggedInState === 'loggedIn'
+    const { classes, page } = this.props
+    const { login: { username, loggedInState }, open, userProfile, snackbarOpen, searchQuery, travelDate } = this.state
+    const isLoggedIn = loggedInState === LoginStates.loggedIn
+    if (page === 'userPage' && userProfile.open) return <Redirect to={`/${username}/profile`} push />
+    if (page === 'userProfile' && !userProfile.open) return <Redirect to={`/${username}`} push />
     return (
       <div className={classes.root}>
         <AppBar position='static'>
           <Toolbar>
-            {isLoggedIn && page !== 'admin'?
-              <IconButton
-                onClick={this.toggleDrawer}
-                className={classes.menuButton}
-                color='inherit'>
-                {open ? <ChevronLeftIcon /> : <MenuIcon />}
-              </IconButton>
+            {isLoggedIn && page === 'userPage'
+              ? <IconButton
+                  onClick={this.toggleDrawer}
+                  className={classes.menuButton}
+                  color='inherit'>
+                  {open ? <ChevronLeftIcon /> : <MenuIcon />}
+                </IconButton>
               : <IconButton
                 className={classes.menuButton}
                 color='inherit'>
@@ -144,19 +136,25 @@ class SearchAppBar extends React.Component {
             <Typography className={classes.title} variant='h6' color='inherit' noWrap>
               Trip Planner
             </Typography>
-            {page !== 'admin' &&  page !== 'landing' ?
-              <div className={classes.grow}>
-                <AutoComplete page='userpage'/>
-              </div>
+            {page === 'userPage'
+              ? <div className={classes.grow}>
+                  <AutoComplete page='userPage' searchQuery={searchQuery} travelDate={travelDate} />
+                </div>
               : <div className={classes.grow} />
             }
             <div className={classes.buttonContainer}>
-              {!(loggedInState === 'loggedIn') && <CreateAccountButton />}
+              <div className={classes.grow} />
+              {isLoggedIn
+                ? page === 'userProfile'
+                  ? <ItineraryButton searchQuery={searchQuery} travelDate={travelDate}/>
+                  : <UserProfileButton />
+                : <CreateAccountButton />}
               <div className={classes.grow} />
               <SignInButton />
             </div>
           </Toolbar>
         </AppBar>
+        <ConfirmAccountCreateSnackbar open={snackbarOpen} />
       </div>
     )
   }

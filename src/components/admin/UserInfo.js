@@ -1,13 +1,12 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField'
-import MenuItem from '@material-ui/core/MenuItem'
 import { withStyles } from '@material-ui/core/styles'
 import DateFnsUtils from '@date-io/date-fns'
 import { MuiPickersUtilsProvider, DatePicker } from 'material-ui-pickers'
 
 import AdminStore from './AdminStore'
 import AdminActions from './AdminActions'
-import { currencies } from '../../utils/Fixtures.js'
+import Autocomplete from '../appbar/AutoComplete'
 
 const styles = theme => ({
   infoLayout: {
@@ -28,8 +27,11 @@ const styles = theme => ({
 class UserInfo extends React.Component {
   constructor () {
     super()
-    const { editUser } = AdminStore.getState()
-    this.state = editUser
+    const { currentUser, editModeOn } = AdminStore.getState()
+    this.state = {
+      currentUser,
+      editModeOn
+    }
   }
 
   componentDidMount () {
@@ -37,78 +39,70 @@ class UserInfo extends React.Component {
   }
 
   componentWillUnmount () {
-    AdminStore.on('change', this.updateState)
+    AdminStore.removeListener('change', this.updateState)
   }
 
   updateState = () => {
-    const { editUser } = AdminStore.getState()
-    this.setState(editUser)
+    const { currentUser, editModeOn } = AdminStore.getState()
+    this.setState({currentUser, editModeOn})
   }
 
   updateBirthday = date => AdminActions.editUserBirthday(date)
   updateLocation = event => AdminActions.editUserLocation(event.target.value)
-  updateCurrency = event => AdminActions.editUserCurrency(currencies.filter(option => option.value === event.target.value)[0])
   updateMisc = event => AdminActions.editUserMisc(event.target.value)
+  updateFullName = event => AdminActions.editUserFullName(event.target.value)
 
   render () {
     const { classes } = this.props
-    const { birthday, location, currency, misc, editModeOn } = this.state
+    const { currentUser, editModeOn } = this.state
+    const { birthday, location, description, fullName } = currentUser
+    const isLoading = Object.keys(currentUser) === 0
+    const loading =
+    <div className={classes.infoLayout}>
+      <h1> Loading... </h1>
+    </div>
     return (
-      <div className={classes.infoLayout}>
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <DatePicker
-            margin='normal'
-            name='birthday'
-            label='Birthday'
-            value={birthday}
-            format='MMMM dd, yyyy'
-            disableFuture
-            openTo='year'
-            views={['year', 'month', 'day']}
-            disabled={!editModeOn}
-            onChange={this.updateBirthday}
-            className={classes.textField}
-          />
-        </MuiPickersUtilsProvider>
-        <TextField
-          disabled={!editModeOn}
-          label='Location'
-          value={location}
-          className={classes.textField}
-          margin='normal'
-          onChange={this.updateLocation}
-        />
-        <TextField
-          disabled={!editModeOn}
-          select
-          label='Currency'
-          className={classes.textField}
-          value={currency.value}
-          SelectProps={{
-            MenuProps: {
-              className: classes.menu
-            }
-          }}
-          onChange={this.updateCurrency}
-          margin='normal'
-        >
-          {currencies.map(option => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.value}
-            </MenuItem>
-          ))
-          }
-        </TextField>
-        <TextField
-          disabled={!editModeOn}
-          multiline
-          label='Miscellaneous'
-          value={misc}
-          className={classes.textField}
-          margin='normal'
-          onChange={this.updateMisc}
-        />
-      </div>
+         isLoading
+          ? loading
+          : (
+              <div className={classes.infoLayout}>
+                <MuiPickersUtilsProvider utils={DateFnsUtils}>
+                  <DatePicker
+                    margin='normal'
+                    name='birthday'
+                    label='Birthday'
+                    value={birthday}
+                    format='MMMM dd, yyyy'
+                    disableFuture
+                    openTo='year'
+                    views={['year', 'month', 'day']}
+                    disabled={!editModeOn}
+                    onChange={this.updateBirthday}
+                  />
+                </MuiPickersUtilsProvider>
+                <Autocomplete
+                  page='admin'
+                  searchQuery={location}
+                  disabled={!editModeOn} />
+                <TextField
+                  disabled={!editModeOn}
+                  multiline
+                  label="Full Name"
+                  value={fullName}
+                  margin='normal'
+                  onChange={this.updateFullName}
+                  />
+                <TextField
+                  disabled={!editModeOn}
+                  multiline
+                  label='Description'
+                  value={description || ''}
+                  margin='normal'
+                  onChange={this.updateMisc}
+                />
+            </div>
+          )
+
     )
   }
 }

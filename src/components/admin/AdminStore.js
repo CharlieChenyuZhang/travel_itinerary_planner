@@ -1,43 +1,43 @@
 import { EventEmitter } from 'events'
 import dispatcher from '../../utils/Dispatcher'
-
 import ActionTypes from '../../utils/ActionTypes'
 
 class AdminStore extends EventEmitter {
   constructor () {
     super()
     this.userQuery = ''
-    this.userDisplayed = '@kquinlivan'
+    this.allUsers = []
+    this.currentUser = {}
+    this.editModeOn = false
+    this.editModeSave = false
+    this.profilePictureDialogOpen = false
+    this.snackbarOpen = false
+    this.snackbarMessage = ''
+
     this.changePW = {
       open: false,
       submit: false,
       password: '',
       retype: ''
     }
-    this.editUser = {
-      birthday: '1991-11-11',
-      location: 'Florida, USA',
-      currency: {
-        value: 'USD',
-        label: '$'
-      },
-      misc: '',
-      save: false,
-      editModeOn: false
-    }
+
     this.deleteUser = {
       open: false,
       delete: false
     }
   }
 
-  getState = () => {
+  getState () {
     return {
+      allUsers: this.allUsers,
       userQuery: this.userQuery,
-      userDisplayed: this.userDisplayed,
+      currentUser: this.currentUser,
+      editModeOn: this.editModeOn,
       changePW: this.changePW,
-      editUser: this.editUser,
-      deleteUser: this.deleteUser
+      deleteUser: this.deleteUser,
+      profilePictureDialogOpen: this.profilePictureDialogOpen,
+      snackbarOpen: this.snackbarOpen,
+      snackbarMessage: this.snackbarMessage
     }
   }
 
@@ -67,7 +67,13 @@ class AdminStore extends EventEmitter {
       }
 
       case ActionTypes.ADMIN_CHANGE_PW_SUBMIT: {
-        this.changePW = action.value
+        this.changePW = {
+          open: false,
+          submit: false,
+          password: '',
+          retype: ''
+        }
+        this.currentUser = action.value
         this.emit('change')
         break
       }
@@ -85,39 +91,52 @@ class AdminStore extends EventEmitter {
       }
 
       case ActionTypes.ADMIN_EDIT_USER_ON: {
-        this.editUser.editModeOn = true
-        this.editUser.save = false
+        this.editModeOn = true
+        this.editModeSave = false
         this.emit('change')
         break
       }
 
-      case ActionTypes.ADMIN_EDIT_USER_CANCEL: {
-        this.editUser.editModeOn = false
-        this.editUser.save = true
-        this.emit('change')
-        break
-      }
-
-      case ActionTypes.ADMIN_EDIT_USER_CURRENCY: {
-        this.editUser.currency = action.value
+      // TODO: this was called once clicked on save
+      case ActionTypes.ADMIN_EDIT_USER_SAVE: {
+        this.editModeOn = false
+        this.editModeSave = true
         this.emit('change')
         break
       }
 
       case ActionTypes.ADMIN_EDIT_USER_MISC: {
-        this.editUser.misc = action.value
+        this.currentUser.description = action.value
         this.emit('change')
         break
       }
 
       case ActionTypes.ADMIN_EDIT_USER_LOCATION: {
-        this.editUser.location = action.value
+        this.currentUser.location = action.value
         this.emit('change')
         break
       }
 
       case ActionTypes.ADMIN_EDIT_USER_BIRTHDAY: {
-        this.editUser.birthday = action.value
+        this.currentUser.birthday = action.value
+        this.emit('change')
+        break
+      }
+
+      case ActionTypes.ADMIN_EDIT_USER_PROFILE_PICTURE: {
+        this.currentUser.profilePicture = action.value
+        this.emit('change')
+        break
+      }
+
+      case ActionTypes.ADMIN_EDIT_USER_FULLNAMEE: {
+        this.currentUser.fullName = action.value
+        this.emit('change')
+        break
+      }
+
+      case ActionTypes.ADMIN_PROFILE_PIC_DIALOG_OPEN: {
+        this.profilePictureDialogOpen = action.value
         this.emit('change')
         break
       }
@@ -130,6 +149,7 @@ class AdminStore extends EventEmitter {
 
       case ActionTypes.ADMIN_DELETE_DIALOG_CANCEL: {
         this.deleteUser.open = false
+        this.deleteUser.delete = false
         this.emit('change')
         break
       }
@@ -143,11 +163,38 @@ class AdminStore extends EventEmitter {
         break
       }
 
+      case ActionTypes.ADMIN_USER_LOAD: {
+        this.allUsers = action.value
+        this.currentUser = this.allUsers[0]
+        this.emit('change')
+        break
+      }
+
+      case ActionTypes.ADMIN_CHANGE_USER_DISPLAYED: {
+        this.currentUser = action.value
+        this.editModeOn = false
+        this.emit('change')
+        break
+      }
+
+      case ActionTypes.USERSEARCH_CHANGE: {
+        this.userQuery = action.value
+        this.emit('change')
+        break
+      }
+
+      case ActionTypes.ADMIN_TOGGLE_SNACKBAR: {
+        this.snackbarOpen = action.value.open
+        this.snackbarMessage = action.value.message || ''
+        this.emit('change')
+        break
+      }
+
       default:
     }
   }
 }
 
 const adminStore = new AdminStore()
-dispatcher.register(adminStore.handleActions.bind(adminStore))
+adminStore.dispatcherToken = dispatcher.register(adminStore.handleActions.bind(adminStore))
 export default adminStore

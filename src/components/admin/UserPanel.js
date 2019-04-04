@@ -3,12 +3,13 @@ import Button from '@material-ui/core/Button'
 import Avatar from '@material-ui/core/Avatar'
 import Typography from '@material-ui/core/Typography'
 import Divider from '@material-ui/core/Divider'
-import UserPassword from './UserPassword.js'
 import UserInfo from './UserInfo.js'
 import { withStyles } from '@material-ui/core/styles'
 
 import AdminActions from './AdminActions'
 import AdminStore from './AdminStore'
+import ProfilePicChooser from '../appbar/ProfilePicChooser'
+
 
 const styles = theme => ({
   viewUser: {
@@ -22,7 +23,7 @@ const styles = theme => ({
     height: '20%',
     padding: 20
   },
-  userAvater: {
+  userAvatar: {
     width: 100,
     height: 100,
     margin: 'auto 0'
@@ -40,14 +41,20 @@ const styles = theme => ({
   },
   userBtn: {
     margin: [[0, 5]]
+  },
+  resetBtn: {
+    padding: 0
   }
 })
 
 class UserPanel extends React.Component {
   constructor () {
     super()
+    const { editModeOn, currentUser, profilePictureDialogOpen } = AdminStore.getState()
     this.state = {
-      editModeOn: false
+      editModeOn,
+      currentUser,
+      profilePictureDialogOpen
     }
   }
 
@@ -56,37 +63,39 @@ class UserPanel extends React.Component {
   }
 
   componentWillUnmount () {
-    AdminStore.on('change', this.updateState)
+    AdminStore.removeListener('change', this.updateState)
   }
 
   updateState = () => {
-    const { editModeOn } = AdminStore.getState().editUser
-    this.setState({ editModeOn}) 
+    const { editModeOn, currentUser, profilePictureDialogOpen } = AdminStore.getState()
+    this.setState({ editModeOn, currentUser, profilePictureDialogOpen })
   }
 
   render () {
     const { classes } = this.props
-    const { editModeOn } = this.state
+    const { editModeOn, currentUser, profilePictureDialogOpen } = this.state
     const editButtonText = editModeOn ? 'Save' : 'Edit user information'
-    const editButtonAction = editModeOn ? () => AdminActions.editModeCancel() : () => AdminActions.editModeOn()
+    const editButtonAction = editModeOn ? () => AdminActions.editModeSave(currentUser) : () => AdminActions.editModeOn()
     return (
       <div className={classes.viewUser}>
         <div className={classes.userHeader}>
-          <Avatar alt='kyle_quinlivan'
-            src={require('../../images/avatar/kyle_quinlivan.png')}
-            className={classes.userAvater}
+          <Avatar alt={currentUser.fullName}
+            src={currentUser.profilePicture}
+            className={classes.userAvatar}
+            onClick={() => editModeOn && AdminActions.toggleEditProfilePictureDialog(true)}
           />
           <div className={classes.userHeaderText}>
             <Typography variant='h5' gutterBottom>
-              FirstName, LastName
+              {currentUser.fullName}
             </Typography>
             <Typography variant='subtitle1' gutterBottom>
-              @uniqueuserid
+              Username: {currentUser.username}
             </Typography>
-            <Typography variant='subtitle1'>
-              Password: <u>******</u>
-              <UserPassword />
-            </Typography>
+            <Button
+              color='primary' className = {classes.resetBtn}
+              onClick={() => AdminActions.changePWDialogOpen()}>
+              Reset Password
+            </Button>
           </div>
         </div>
         <Divider />
@@ -107,6 +116,7 @@ class UserPanel extends React.Component {
             Delete User
           </Button>
         </div>
+        <ProfilePicChooser page='admin' open={profilePictureDialogOpen} />
       </div>
     )
   }

@@ -14,6 +14,8 @@ import cities from 'cities.json'
 
 import SearchAppBarActions from './SearchAppBarActions'
 import SearchAppBarStore from './SearchAppBarStore'
+import AdminActions from '../admin/AdminActions'
+import UserProfileActions from '../userpage/profile/UserProfileActions'
 
 const styles = theme => ({
   root: {
@@ -24,7 +26,7 @@ const styles = theme => ({
   },
   suggestionsContainerOpen: {
     position: 'absolute',
-    zIndex: 1,
+    zIndex: 1201,
     marginTop: theme.spacing.unit,
     left: 0,
     right: 0
@@ -60,34 +62,46 @@ const styles = theme => ({
     color: 'inherit',
     width: '100%'
   },
+  inputRootDisabled: {
+    color: 'rgba(0, 0, 0, 0.38)'
+  },
   inputInput: {
     paddingTop: theme.spacing.unit,
     paddingRight: theme.spacing.unit,
     paddingBottom: theme.spacing.unit,
     paddingLeft: theme.spacing.unit * 10,
     width: '100%',
+  },
+  noPaddingInput: {
+    paddingTop: theme.spacing.unit,
+    paddingRight: theme.spacing.unit,
+    paddingBottom: theme.spacing.unit,
+    paddingLeft: 0,
+    width: '100%',
   }
 })
 
-const suggestions = cities.map( suggestion => ({
+const suggestions = cities.map((suggestion) => ({
       value: `${suggestion.name}, ${suggestion.country}`,
       label: `${suggestion.name}, ${suggestion.country}`
   })
 )
 
 const renderInputComponent = (inputProps) => {
-  const { classes, value, handleSubmit, ...other } = inputProps;
+  const { classes, value, handleSubmit, page, disabled, ...other } = inputProps;
+  const noPadding = page === 'admin' || page === 'userProfile'
   return (
     <div className={classes.search}>
+      {!noPadding &&
       <div className={classes.searchIcon}>
         <IconButton component={() => <SearchIcon />} />
-      </div>
+      </div>}
       <InputBase
         fullWidth
         value={value}
         classes={{
-          root: classes.inputRoot,
-          input: classes.inputInput
+          root: disabled ? classes.inputRootDisabled : classes.inputRoot,
+          input: noPadding ? classes.noPaddingInput : classes.inputInput
         }}
         {...other}
       />
@@ -137,26 +151,12 @@ const getSuggestionValue = (suggestion) => {
 }
 
 class AutoComplete extends React.Component {
-  constructor () {
-    super()
-    const { searchQuery } = SearchAppBarStore.getState()
+  constructor (props) {
+    super(props)
     this.state = {
-      searchQuery: searchQuery,
-      suggestions: []
+      suggestions: [],
+      searchQuery: this.props.searchQuery || '',
     }
-  }
-
-  componentDidMount () {
-    SearchAppBarStore.on('change', this.updateState)
-  }
-
-  componentWillUnmount () {
-    SearchAppBarStore.removeListener('change', this.updateState)
-  }
-
-  updateState = () => {
-    const { searchQuery } = SearchAppBarStore.getState()
-    this.setState({ searchQuery })
   }
 
   handleSuggestionsFetchRequested = ({ value }) => {
@@ -172,36 +172,29 @@ class AutoComplete extends React.Component {
   }
 
   onSuggestionSelected = (event, { suggestionValue }) => {
-    SearchAppBarActions.searchbarSearch(suggestionValue)
-  }
-
-  onSuggestionHighlighted = ({ suggestion }) => {
-    suggestion && SearchAppBarActions.searchbarChange(getSuggestionValue(suggestion))
+    this.setState({ searchQuery: suggestionValue })
+    const { page } = this.props
+    page === 'landing' && SearchAppBarActions.signinDialogOpen()
+    page === 'admin' && AdminActions.editUserLocation(suggestionValue)
+    page === 'userPage' && SearchAppBarActions.searchbarSearch(suggestionValue, this.props.travelDate)
+    page === 'userProfile' && UserProfileActions.editLocation(suggestionValue)
   }
 
   shouldRenderSuggestions = (value) => value.trim().length > 2
 
   handleChange = event => {
-    SearchAppBarActions.searchbarChange(event.target.value)
+    this.setState({ searchQuery: event.target.value })
   }
 
-  handleSubmit = event => {
-    if ((event.keyCode && event.keyCode === 13) || event.type === 'click') {
-      this.props.page === 'landing'
-      ? SearchAppBarActions.signinDialogOpen()
-      : SearchAppBarActions.searchbarSearch(this.state.searchQuery)
-    }
-  }
-
-  render() {
-    const { classes, page } = this.props
+  render () {
+    const { classes, page, disabled } = this.props
+    const value = this.state.searchQuery
     const autosuggestProps = { // built in props for the autosuggest component
       renderInputComponent,
       suggestions: this.state.suggestions,
       onSuggestionsFetchRequested: this.handleSuggestionsFetchRequested,
       onSuggestionsClearRequested: this.handleSuggestionsClearRequested,
       onSuggestionSelected: this.onSuggestionSelected,
-      onSuggestionHighlighted: this.onSuggestionHighlighted,
       shouldRenderSuggestions: this.shouldRenderSuggestions,
       focusInputOnSuggestionClick: false,
       getSuggestionValue,
@@ -215,10 +208,10 @@ class AutoComplete extends React.Component {
           inputProps={{
             classes,
             placeholder: 'Which city do you want to visit?',
-            value: this.state.searchQuery,
+            value,
             onChange: this.handleChange,
-            onKeyDown: this.handleSubmit,
-            page
+            page,
+            disabled
           }}
           theme={{
             container: classes.container,

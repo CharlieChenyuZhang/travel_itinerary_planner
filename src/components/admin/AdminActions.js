@@ -1,5 +1,6 @@
 import dispatcher from '../../utils/Dispatcher'
 import ActionTypes from '../../utils/ActionTypes'
+import { getAllUsers, patchUser, getUsersByName, deleteUser } from '../../utils/ServerMethods'
 
 const AdminActions = {
   clickSubmit () {
@@ -26,10 +27,24 @@ const AdminActions = {
     })
   },
 
-  changePWSubmit (formData) {
-    dispatcher.dispatch({
-      type: ActionTypes.ADMIN_CHANGE_PW_SUBMIT
-    })
+  changePWSubmit (user) {
+    patchUser(user)
+      .then((res) => {
+        dispatcher.dispatch({
+          type: ActionTypes.ADMIN_CHANGE_PW_SUBMIT,
+          value: user
+        })
+        dispatcher.dispatch({
+          type: ActionTypes.ADMIN_TOGGLE_SNACKBAR,
+          value: { open: true, message: `Password changed!` }
+        })
+      })
+      .catch((err) => {
+        dispatcher.dispatch({
+          type: ActionTypes.ADMIN_TOGGLE_SNACKBAR,
+          value: { open: true, message: `Changes not saved! ${err}` }
+        })
+      })
   },
 
   changePWPassword (password) {
@@ -58,11 +73,30 @@ const AdminActions = {
     })
   },
 
-  deleteUserDialogSubmit (user) {
-    dispatcher.dispatch({
-      type: ActionTypes.ADMIN_DELETE_DIALOG_SUBMIT,
-      value: user
-    })
+  deleteUserDialogSubmit (user) { // WORKING
+    deleteUser(user)
+      .then((res) => {
+        dispatcher.dispatch({
+          type: ActionTypes.ADMIN_DELETE_DIALOG_SUBMIT
+        })
+        dispatcher.dispatch({
+          type: ActionTypes.ADMIN_TOGGLE_SNACKBAR,
+          value: { open: true, message: `${res.username} was deleted!` }
+        })
+        getAllUsers()
+          .then((result) => {
+            dispatcher.dispatch({
+              type: ActionTypes.ADMIN_USER_LOAD,
+              value: result
+            })
+          })
+      })
+      .catch((err) => {
+        dispatcher.dispatch({
+          type: ActionTypes.ADMIN_TOGGLE_SNACKBAR,
+          value: { open: true, message: `Changes not saved! ${err}` }
+        })
+      })
   },
 
   editModeOn () {
@@ -71,16 +105,22 @@ const AdminActions = {
     })
   },
 
-  editModeCancel () {
-    dispatcher.dispatch({
-      type: ActionTypes.ADMIN_EDIT_USER_CANCEL
-    })
-  },
-
-  editModeSave () {
-    dispatcher.dispatch({
-      type: ActionTypes.ADMIN_EDIT_USER_SAVE
-    })
+  editModeSave (user) {
+    patchUser(user) // user is the one with all info
+      .then((res) => {
+        dispatcher.dispatch({
+          type: ActionTypes.ADMIN_EDIT_USER_SAVE
+        })
+        dispatcher.dispatch({
+          type: ActionTypes.ADMIN_TOGGLE_SNACKBAR,
+          value: { open: true, message: 'Changes saved!' }
+        })
+      }).catch((error) => {
+        dispatcher.dispatch({
+          type: ActionTypes.ADMIN_TOGGLE_SNACKBAR,
+          value: { open: true, message: `Changes not saved! ${error}` }
+        })
+      })
   },
 
   editUserBirthday (birthday) {
@@ -97,17 +137,59 @@ const AdminActions = {
     })
   },
 
-  editUserCurrency (currency) {
-    dispatcher.dispatch({
-      type: ActionTypes.ADMIN_EDIT_USER_CURRENCY,
-      value: currency
-    })
-  },
-
   editUserMisc (misc) {
     dispatcher.dispatch({
       type: ActionTypes.ADMIN_EDIT_USER_MISC,
       value: misc
+    })
+  },
+
+  editUserFullName (fullName) {
+    dispatcher.dispatch({
+      type: ActionTypes.ADMIN_EDIT_USER_FULLNAME,
+      value: fullName
+    })
+  },
+
+  editUserProfilePicture (img) {
+    dispatcher.dispatch({
+      type: ActionTypes.ADMIN_PROFILE_PIC_DIALOG_OPEN,
+      value: false
+    })
+    dispatcher.dispatch({
+      type: ActionTypes.ADMIN_EDIT_USER_PROFILE_PICTURE,
+      value: img
+    })
+  },
+
+  toggleEditProfilePictureDialog (value) {
+    dispatcher.dispatch({
+      type: ActionTypes.ADMIN_PROFILE_PIC_DIALOG_OPEN,
+      value
+    })
+  },
+
+  startLoad () {
+    return getAllUsers().then((res) => {
+      console.log (res)
+      dispatcher.dispatch({
+        type: ActionTypes.ADMIN_USER_LOAD,
+        value: res
+      })
+      return Promise.resolve()
+      // dispatcher.waitFor([searchappbarStore.dispatcherToken])
+    }).catch((err) => {
+      console.log(err)
+    })
+    // dispatcher.dispatch({
+    //   type: ActionTypes.ADMIN_USER_LOAD
+    // })
+  },
+
+  changeUserDisplayed (user) {
+    dispatcher.dispatch({
+      type: ActionTypes.ADMIN_CHANGE_USER_DISPLAYED,
+      value: user
     })
   },
 
@@ -116,12 +198,27 @@ const AdminActions = {
       type: ActionTypes.USERSEARCH_CHANGE,
       value: query
     })
+    getUsersByName(query).then((res) => {
+      dispatcher.dispatch({
+        type: ActionTypes.ADMIN_USER_LOAD,
+        value: res
+      })
+    }).catch((error) => {
+      console.log(error)
+    })
   },
 
   userSearch (query) {
     dispatcher.dispatch({
       type: ActionTypes.USERSEARCH_SEARCH,
       value: query
+    })
+  },
+
+  toggleSnackbar (value) {
+    dispatcher.dispatch({
+      type: ActionTypes.ADMIN_TOGGLE_SNACKBAR,
+      value
     })
   }
 }

@@ -3,18 +3,24 @@ import { DropTarget } from 'react-dnd'
 import { withStyles } from '@material-ui/core/styles'
 import ListItem from '@material-ui/core/ListItem'
 import Typography from '@material-ui/core/Typography'
-import UserActions from '../UserActions'
+import RecommendationsActions from '../recommendations/RecommendationsActions'
+import RecommendationsStore from '../recommendations/RecommendationsStore'
 import ItineraryEvent from './ItineraryEvent'
+import ItineraryStore from './ItineraryStore'
+import ItineraryActions from './ItineraryActions'
 
 const hourTarget = {
   drop (props, monitor) {
     const data = monitor.getItem()
-    UserActions.addEvent({
+    ItineraryActions.addEvent({
       data: data,
       hour: props.time,
       id: data.id
     })
-    UserActions.removeRecommendation(data.id)
+    const { existingEvent } = ItineraryStore.getState()
+    const { fetchedRecommendations } = RecommendationsStore.getState()
+    existingEvent && RecommendationsActions.addRecommendation(existingEvent) // Adds a replaced event back to Recommendations from Itinerary
+    RecommendationsActions.removeRecommendation(data.title, fetchedRecommendations)
   }
 }
 

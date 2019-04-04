@@ -13,8 +13,7 @@ import TextField from '@material-ui/core/TextField'
 
 import SearchAppBarStore from './SearchAppBarStore'
 import SearchAppBarActions from './SearchAppBarActions'
-import AppStore from '../AppStore'
-import LoginStates from '../../utils/LoginStates'
+import { LoginStates } from '../../utils/Utils'
 
 const styles = theme => ({
   root: {
@@ -41,23 +40,23 @@ const styles = theme => ({
 class SigninDialog extends React.Component {
   constructor (props) {
     super(props)
-    const { signin } = SearchAppBarStore.getState()
-    this.state = signin
+    const { signin, login, travelDate, searchQuery } = SearchAppBarStore.getState()
+    this.state = { signin, login }
   }
 
   componentDidMount () {
     SearchAppBarStore.on('change', this.updateState)
-    AppStore.on('change', this.updateState)
+    this._isMounted = true
   }
 
   componentWillUnmount () {
     SearchAppBarStore.removeListener('change', this.updateState)
-    AppStore.removeListener('change', this.updateState)
+    this._isMounted = false
   }
 
   updateState = () => {
-    this.setState(SearchAppBarStore.getState().signin)
-    this.setState(AppStore.getState())
+    const { signin, login, travelDate, searchQuery } = SearchAppBarStore.getState()
+    this._isMounted && this.setState({ signin, login, travelDate, searchQuery })
   }
 
   updateUsername = event => SearchAppBarActions.signinDialogEmailChange(event.target.value)
@@ -70,17 +69,17 @@ class SigninDialog extends React.Component {
 
   cancel = () => SearchAppBarActions.signinDialogCancel()
 
-  validate = () => this.state.username && this.state.password
+  validate = () => this.state.signin.username && this.state.signin.password
 
   doLogin = () => {
-    SearchAppBarActions.signinDialogSigninStart({
-      username: this.state.username,
-      password: this.state.password
-    })
+    const { signin: { username, password }, travelDate, searchQuery } = this.state
+
+    SearchAppBarActions.signinDialogSigninStart({ username, password, travelDate, searchQuery })
   }
 
   render () {
-    const { open, loggedInState, dialogText, username, password} = this.state
+    const { loggedInState } = this.state.login
+    const { open, dialogText, username, password } = this.state.signin
     return (
       <Dialog
         open={open && loggedInState !== LoginStates.loggedIn}
