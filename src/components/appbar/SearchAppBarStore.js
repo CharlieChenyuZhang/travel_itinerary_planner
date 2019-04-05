@@ -156,7 +156,8 @@ class SearchAppBarStore extends EventEmitter {
           username: action.value.username,
           privilege: action.value.privilege
         }
-        this.searchQuery = action.value.location
+        this.searchQuery = action.value.searchQuery
+        this.travelDate = action.value.travelDate
         this.emit('change')
         break
       }

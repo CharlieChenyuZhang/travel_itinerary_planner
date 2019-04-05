@@ -125,7 +125,8 @@ class ItineraryStore extends EventEmitter {
       }
 
       case ActionTypes.SIGNIN_DIALOG_SIGNIN_SUCCESS: {
-        this.location = action.value.location
+        this.location = action.value.searchQuery
+        this.date = action.value.travelDate
         this.emit('change')
         break
       }
