@@ -21,7 +21,7 @@ FEATURES - USER PAGE:
 - These recommendations can also be filtered through the preference drawer on the left of the screen.
 - The user can drag these recommendations into a daily itinerary to plan their day.
 - The user can save, view saved itineraries, modify, and delete itineraries for each city/date combination.
-- The user can also delete their account, view and modify their profile information and itineraries through a separate user profile screen by clicking on the profile icon on the top right corner of the screen.
+- The user can also view and modify their profile information and itineraries through a separate user profile screen.
 - The user can also change which city to find recommendations for, as well as sign out and return to the landing.
 
 FEATURES - ADMIN:
@@ -32,4 +32,29 @@ FEATURES - ADMIN:
 - The admin can edit the details of any user by clicking the 'Edit User Information' button. Any changes will be updated in the database after hitting the 'Save' button.
 - The admin can delete any user by clicking on the 'Delete User' button and confirming 'Delete' on the dialog. Selected user will be deleted and removed from the list of all users.
 - The admin can log out to the landing page and all changes made during their session will be retained.
-- DIFFERENCE IN PROPOSAL: Admin cannot enable/disable features viewable to users. We think the users should be able to enjoy all the features.
+
+ROUTES OVERVIEW
+- authenticate middleware
+  - similar to what we saw in class. Checks if the user has a session, if not they're unauthorized.
+- post: /users
+  - used to create new users.
+- get: /users
+  - used to get all users. not paginated. used for admin to see all users. only admins can do this
+- get: /users/:name
+  - used to get a specific user's info, again only admins can do this. used in the admin search 
+- get: /users/:username/:password 
+  - used to get information about a certain user. any user can do this as long as they have the plaintext password.
+- patch: /users
+  - used to update a users information, for admins or users
+- delete: /users
+  - used to delete a users account. admins or users can do this
+- post: /users/itineraries
+  - for users to save new itineraries
+- delete: /users/itineraries/:id
+  - for users to delete their itineraries
+- patch: /users/itineraries/:id
+  - for users to update their itineraries
+- post: /users/login
+  - for users to login
+- get: /users/logout
+  - for users to logout
