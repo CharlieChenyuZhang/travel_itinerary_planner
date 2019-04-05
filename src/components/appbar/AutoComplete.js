@@ -13,7 +13,6 @@ import { withStyles } from '@material-ui/core/styles'
 import cities from 'cities.json'
 
 import SearchAppBarActions from './SearchAppBarActions'
-import SearchAppBarStore from './SearchAppBarStore'
 import AdminActions from '../admin/AdminActions'
 import UserProfileActions from '../userpage/profile/UserProfileActions'
 

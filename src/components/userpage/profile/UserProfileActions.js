@@ -1,6 +1,6 @@
 import dispatcher from '../../../utils/Dispatcher'
 import ActionTypes from '../../../utils/ActionTypes'
-import { deleteItinerary, patchItinerary, getAllUsers, patchUser, getUsersByName, deleteUser } from '../../../utils/ServerMethods'
+import { deleteItinerary, patchItinerary, patchUser, deleteUser } from '../../../utils/ServerMethods'
 
 const UserProfileActions = {
   editBirthday (birthday) {
@@ -186,11 +186,6 @@ const UserProfileActions = {
     // Can be various error codes based on invalid input in the fields, or a success
   },
 
-  changePWDialogOpen () {
-    dispatcher.dispatch({
-      type: ActionTypes.USER_CHANGE_PW_OPEN
-    })
-  },
   clickSubmit () {
     dispatcher.dispatch({
       type: ActionTypes.USER_CHANGE_PW_CLICK_SUBMIT
