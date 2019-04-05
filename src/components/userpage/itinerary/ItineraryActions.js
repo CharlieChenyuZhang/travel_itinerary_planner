@@ -2,9 +2,7 @@ import dispatcher from '../../../utils/Dispatcher'
 import ActionTypes from '../../../utils/ActionTypes'
 import { postItinerary, patchItinerary } from '../../../utils/ServerMethods'
 
-import RecommendationsStore from '../recommendations/RecommendationsStore'
 import RecommendationsActions from '../recommendations/RecommendationsActions'
-import ItineraryStore from './ItineraryStore'
 
 const ItineraryActions = {
   addEvent (event) {

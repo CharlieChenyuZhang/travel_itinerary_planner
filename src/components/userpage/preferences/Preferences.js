@@ -26,6 +26,12 @@ const styles = theme => ({
   },
   nested: {
    paddingLeft: theme.spacing.unit * 4
+ },
+ noMargin: {
+   marginRight: 0
+ },
+ margin: {
+   marginRight: 16
  }
 })
 
@@ -58,10 +64,10 @@ class Preferences extends React.Component {
                 {this.state.toggled[key] ? <ExpandLess /> : <ExpandMore />}
               </IconButton>
             </ListItemIcon>
-            <ListItemIcon>
+            <ListItemIcon className={classes.noMargin}>
               {Icons[key]}
             </ListItemIcon>
-            <ListItemText primary={toTitleCase(key)} />
+            <ListItemText className={classes.margin} primary={toTitleCase(key)} />
             <ListItemSecondaryAction>
               <Switch
                 onChange={this.handleSwitchChange(key)}
@@ -73,7 +79,7 @@ class Preferences extends React.Component {
             <List component='div' className={classes.nested}>
               {Object.entries(value).map(([key, value]) => (
                 <ListItem key={`${key} li`} >
-                  <ListItemText primary={toTitleCase(key)} />
+                  <ListItemText className={classes.margin} primary={toTitleCase(key)} />
                   <ListItemSecondaryAction>
                     <Switch
                       onChange={this.handleSwitchChange(key)}

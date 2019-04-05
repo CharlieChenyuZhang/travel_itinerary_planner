@@ -14,7 +14,6 @@ import { DatePicker, MuiPickersUtilsProvider  } from 'material-ui-pickers';
 
 import SearchAppBarStore from './SearchAppBarStore'
 import SearchAppBarActions from './SearchAppBarActions'
-import defaultProfilePicture from './../../images/defaultProfilePicture.png'
 import ProfilePicChooser from './ProfilePicChooser'
 
 const styles = {

@@ -4,7 +4,6 @@ import GridList from '@material-ui/core/GridList'
 import { withStyles } from '@material-ui/core/styles'
 
 import Recommendation from './Recommendation'
-import RecommendationsActions from './RecommendationsActions'
 import RecommendationsStore from './RecommendationsStore'
 import PreferencesStore from '../preferences/PreferencesStore'
 

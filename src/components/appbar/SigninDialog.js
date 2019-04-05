@@ -40,7 +40,7 @@ const styles = theme => ({
 class SigninDialog extends React.Component {
   constructor (props) {
     super(props)
-    const { signin, login, travelDate, searchQuery } = SearchAppBarStore.getState()
+    const { signin, login } = SearchAppBarStore.getState()
     this.state = { signin, login }
   }
 
