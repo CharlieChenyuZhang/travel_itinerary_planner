@@ -216,7 +216,7 @@ const UserProfileActions = {
         type: ActionTypes.USER_CHANGE_PW_SUBMIT,
         value: user
       })
-    }).catch((err) => console.log(err))
+    }).catch((error) => console.log(error))
   },
 
   changePWPassword (password) {

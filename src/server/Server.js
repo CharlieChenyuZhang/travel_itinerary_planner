@@ -5,7 +5,6 @@ const bodyParser = require('body-parser')
 const session = require('express-session')
 const { ObjectID } = require('mongodb')
 
-// make some models and import em
 const { User } = require('./models/User')
 
 const app = express()
@@ -14,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 // session middleware
 app.use(session({
-  secret: 'oursecret', //TODO: change this to a string defined somewhere
+  secret: 'oursecret',
   resave: false,
   saveUninitialized: false,
   cookie: {
@@ -24,7 +23,6 @@ app.use(session({
 }))
 
 /* ========== MIDDLEWARE ========== */
-const sessionChecker = (req, res, next) => req.session.user ? next() : next() //TODO: change the pass clause to do something
 const authenticate = (req, res, next) => {
   if (req.session.userid) {
     User.findById(req.session.userid)
@@ -33,7 +31,7 @@ const authenticate = (req, res, next) => {
         req.user = user
         next()
       })
-      .catch((error) => res.status(403).send(error)) //TODO: something better
+      .catch((error) => res.status(403).send(error))
   } else {
     return res.status(403).send()
   }
@@ -98,7 +96,7 @@ app.patch('/users', authenticate, (req, res) => {
       if (!user) res.status(404).send()
       else res.send(user)
     })
-    .catch((error) => {console.log("returned error: ", error); res.status(500).send(error)}) // FIXME:
+    .catch((error) => res.status(500).send(error))
 })
 
 app.delete('/users', authenticate, (req, res) => {
@@ -156,7 +154,7 @@ app.patch('/users/itineraries/:id', authenticate, (req, res) => {
     .catch((error) => res.status(500).send(error))
 })
 
-// Login routes
+/* ========== LOGIN ROUTES ========== */
 app.post('/users/login', (req, res) => {
   const { username, password } = req.body
   User.findByUsernamePassword(username, password)

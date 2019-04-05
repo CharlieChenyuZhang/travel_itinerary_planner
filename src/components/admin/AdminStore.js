@@ -97,7 +97,6 @@ class AdminStore extends EventEmitter {
         break
       }
 
-      // TODO: this was called once clicked on save
       case ActionTypes.ADMIN_EDIT_USER_SAVE: {
         this.editModeOn = false
         this.editModeSave = true
@@ -129,7 +128,7 @@ class AdminStore extends EventEmitter {
         break
       }
 
-      case ActionTypes.ADMIN_EDIT_USER_FULLNAMEE: {
+      case ActionTypes.ADMIN_EDIT_USER_FULLNAME: {
         this.currentUser.fullName = action.value
         this.emit('change')
         break

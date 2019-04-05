@@ -20,7 +20,7 @@ const RecommendationsActions = {
             })
           })
       })
-      .catch((err) => console.log(err)) // TODO: SOMETHING BETTER WITH ERRORS
+      .catch((error) => console.log(error))
   },
   addRecommendation (event) {
     dispatcher.dispatch({
@@ -39,7 +39,7 @@ const RecommendationsActions = {
           value: { title, formattedVenues }
         })
       ))
-      .catch((err) => console.log(err)) // TODO: SOMETHING BETTER WITH ERRORS
+      .catch((error) => console.log(error))
   },
 
   // ///////////// FOURSQUARE API CALLS ///////////////
@@ -58,7 +58,7 @@ const RecommendationsActions = {
             resolve(items.map(item => item.venue))
           })
         })
-        .catch((err) => reject(err))
+        .catch((error) => reject(error))
     })
   },
 
@@ -75,7 +75,7 @@ const RecommendationsActions = {
             resolve(items.map(item => item.venue))
           })
         })
-        .catch((err) => reject(err))
+        .catch((error) => reject(error))
     })
   },
 
@@ -89,7 +89,7 @@ const RecommendationsActions = {
           result.json()
             .then(json => resolve(json.response.venue))
         })
-        .catch((err) => reject(err))
+        .catch((error) => reject(error))
     })
   },
 
