@@ -129,7 +129,7 @@ class AdminStore extends EventEmitter {
         break
       }
 
-      case ActionTypes.ADMIN_EDIT_USER_FULLNAMEE: {
+      case ActionTypes.ADMIN_EDIT_USER_FULLNAME: {
         this.currentUser.fullName = action.value
         this.emit('change')
         break
