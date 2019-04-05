@@ -21,7 +21,7 @@ FEATURES - USER PAGE:
 - These recommendations can also be filtered through the preference drawer on the left of the screen.
 - The user can drag these recommendations into a daily itinerary to plan their day.
 - The user can save, view saved itineraries, modify, and delete itineraries for each city/date combination.
-- The user can also view and modify their profile information and itineraries through a separate user profile screen.
+- The user can also delete their account, view and modify their profile information and itineraries through a separate user profile screen by clicking on the profile icon on the top right corner of the screen.
 - The user can also change which city to find recommendations for, as well as sign out and return to the landing.
 
 FEATURES - ADMIN:
@@ -32,3 +32,4 @@ FEATURES - ADMIN:
 - The admin can edit the details of any user by clicking the 'Edit User Information' button. Any changes will be updated in the database after hitting the 'Save' button.
 - The admin can delete any user by clicking on the 'Delete User' button and confirming 'Delete' on the dialog. Selected user will be deleted and removed from the list of all users.
 - The admin can log out to the landing page and all changes made during their session will be retained.
+- DIFFERENCE IN PROPOSAL: Admin cannot enable/disable features viewable to users. We think the users should be able to enjoy all the features.
