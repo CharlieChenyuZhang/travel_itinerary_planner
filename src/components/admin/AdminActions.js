@@ -171,7 +171,6 @@ const AdminActions = {
 
   startLoad () {
     return getAllUsers().then((res) => {
-      console.log (res)
       dispatcher.dispatch({
         type: ActionTypes.ADMIN_USER_LOAD,
         value: res
