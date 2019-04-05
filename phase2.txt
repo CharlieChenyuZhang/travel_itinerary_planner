@@ -1,11 +1,6 @@
-SETUP instructions and CREDENTIALS:
+Heroku link to the App: https://travel-planner-app-38.herokuapp.com/
 
-1) Clone the project repo
-2) In a terminal, cd to the team38 folder
-2) In a terminal, run "npm install" to get necessary packages
-3) In a terminal, run "npm start" to build and open the app
-[NOTE: if a browser window doesn't automatically open up, please copy the URL in the terminal and paste to a new browser window]
-
+CREDENTIALS:
 USER CREDENTIAL:
 Username: user
 Password: user
