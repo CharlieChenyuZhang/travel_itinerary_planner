@@ -78,7 +78,7 @@ class CreateAccountDialog extends React.Component {
         profilePicture,
         location,
         description: 'Hello World!', // default
-        privilege: 0 // TODO: This is a magic number need to change
+        privilege: 0 // 0 = user, 1 = admin
       })
     }
   }

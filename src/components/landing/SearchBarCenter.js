@@ -53,7 +53,7 @@ class SearchBarCenter extends React.Component {
             <DatePicker
               value={travelDate}
               onChange={this.handleDateChange}
-              disableFuture
+              disablePast
               label='Travel Date'
               openTo='year'
               fullWidth
