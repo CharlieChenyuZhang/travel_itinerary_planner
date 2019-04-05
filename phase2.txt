@@ -19,7 +19,12 @@ FEATURES - LANDING:
 
 
 FEATURES - USER PAGE:
-
+- The user can view recommended activities according to their city & date choices.
+- These recommendations can also be filtered through the preference drawer on the left of the screen.
+- The user can drag these recommendations into a daily itinerary to plan their day.
+- The user can save, modify, and delete itineraries for each city/date combination.
+- The user can also view and modify their profile information and itineraries through a separate user profile screen.
+- The user can also change which city to find recommendations for, as well as sign out and return to the landing.
 
 FEATURES - ADMIN:
 - A list of all users will be loaded in the left panel, displaying their username (unique) and full name.

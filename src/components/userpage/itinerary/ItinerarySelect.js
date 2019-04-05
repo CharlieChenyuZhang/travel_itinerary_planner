@@ -28,6 +28,7 @@ class ItinerarySelect extends React.Component {
     const index = event.target.value
     const { recommendations, fetchedRecommendations } = RecommendationsStore.getState()
     const { user: { location } } = UserStore.getState()
+
     if (isNaN(index)) return
     // user has no itineraries
     if (index < 0) {

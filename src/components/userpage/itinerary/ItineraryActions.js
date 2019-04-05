@@ -4,6 +4,7 @@ import { postItinerary, patchItinerary } from '../../../utils/ServerMethods'
 
 import RecommendationsActions from '../recommendations/RecommendationsActions'
 
+
 const ItineraryActions = {
   addEvent (event) {
     dispatcher.dispatch({

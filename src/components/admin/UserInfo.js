@@ -109,7 +109,6 @@ class UserInfo extends React.Component {
                 />
             </div>
           )
-
     )
   }
 }

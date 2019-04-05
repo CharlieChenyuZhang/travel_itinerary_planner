@@ -217,6 +217,7 @@ const UserProfileActions = {
         value: user
       })
     }).catch((error) => console.log(error))
+
   },
 
   changePWPassword (password) {

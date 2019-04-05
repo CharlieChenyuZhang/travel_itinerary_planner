@@ -177,6 +177,7 @@ const AdminActions = {
       })
       return Promise.resolve()
     }).catch((error) => console.log(error))
+
   },
 
   changeUserDisplayed (user) {

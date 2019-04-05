@@ -126,6 +126,7 @@ const SearchAppBarActions = {
               dispatcher.dispatch({
                 type: ActionTypes.SIGNIN_DIALOG_SIGNIN_SUCCESS,
                 value: { travelDate, searchQuery, ...res }
+
               })
               RecommendationsActions.startLoad(searchQuery, travelDate)
             }
