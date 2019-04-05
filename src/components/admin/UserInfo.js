@@ -66,6 +66,14 @@ class UserInfo extends React.Component {
           ? loading
           : (
               <div className={classes.infoLayout}>
+                <TextField
+                  disabled={!editModeOn}
+                  multiline
+                  label="Full Name"
+                  value={fullName}
+                  margin='normal'
+                  onChange={this.updateFullName}
+                  />
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <DatePicker
                     margin='normal'
@@ -84,14 +92,6 @@ class UserInfo extends React.Component {
                   page='admin'
                   searchQuery={location}
                   disabled={!editModeOn} />
-                <TextField
-                  disabled={!editModeOn}
-                  multiline
-                  label="Full Name"
-                  value={fullName}
-                  margin='normal'
-                  onChange={this.updateFullName}
-                  />
                 <TextField
                   disabled={!editModeOn}
                   multiline
