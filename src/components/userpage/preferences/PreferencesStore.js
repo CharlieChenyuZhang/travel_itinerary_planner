@@ -71,6 +71,12 @@ class PreferencesStore extends EventEmitter {
         break
       }
 
+      case ActionTypes.APPBAR_USER_PROFILE_CLOSE: {
+        this.open = true
+        this.emit('change')
+        break
+      }
+
       default:
     }
   }

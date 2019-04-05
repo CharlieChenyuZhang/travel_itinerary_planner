@@ -13,7 +13,6 @@ import { withStyles } from '@material-ui/core/styles'
 import cities from 'cities.json'
 
 import SearchAppBarActions from './SearchAppBarActions'
-import SearchAppBarStore from './SearchAppBarStore'
 import AdminActions from '../admin/AdminActions'
 import UserProfileActions from '../userpage/profile/UserProfileActions'
 
@@ -174,7 +173,11 @@ class AutoComplete extends React.Component {
   onSuggestionSelected = (event, { suggestionValue }) => {
     this.setState({ searchQuery: suggestionValue })
     const { page } = this.props
-    page === 'landing' && SearchAppBarActions.signinDialogOpen()
+    const landingOpen = (suggestionValue) => {
+      SearchAppBarActions.searchbarChange(suggestionValue)
+      SearchAppBarActions.signinDialogOpen(suggestionValue)
+    }
+    page === 'landing' && landingOpen(suggestionValue)
     page === 'admin' && AdminActions.editUserLocation(suggestionValue)
     page === 'userPage' && SearchAppBarActions.searchbarSearch(suggestionValue, this.props.travelDate)
     page === 'userProfile' && UserProfileActions.editLocation(suggestionValue)

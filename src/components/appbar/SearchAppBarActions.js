@@ -41,7 +41,6 @@ const SearchAppBarActions = {
     postUser(account)
       .then((res) => {
         if (res === 201) {
-          // TODO: can login the user here
           this.snackbarToggle(true)
           dispatcher.dispatch({
             type: ActionTypes.CREATE_ACCOUNT_CANCEL
@@ -51,12 +50,6 @@ const SearchAppBarActions = {
       .catch(() => dispatcher.dispatch({
         type: ActionTypes.CREATE_ACCOUNT_DUPLICATE_ACCOUNT
       }))
-
-    //   })
-    // dispatcher.dispatch({
-    //   type: ActionTypes.CREATE_ACCOUNT_SUBMIT,
-    //   value: account
-    // })
   },
 
   landingSearchbarDateChange (date) {
@@ -132,7 +125,8 @@ const SearchAppBarActions = {
               })
               dispatcher.dispatch({
                 type: ActionTypes.SIGNIN_DIALOG_SIGNIN_SUCCESS,
-                value: { ...res }
+                value: { travelDate, searchQuery, ...res }
+
               })
               RecommendationsActions.startLoad(searchQuery, travelDate)
             }
@@ -162,7 +156,7 @@ const SearchAppBarActions = {
       .then((res) => dispatcher.dispatch({
         type: ActionTypes.SIGNOUT
       }))
-      .catch((err) => console.log ('internal server error'))
+      .catch((error) => console.log(error))
   },
 
   userProfileOpen () {

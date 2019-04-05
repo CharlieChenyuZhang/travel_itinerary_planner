@@ -41,7 +41,7 @@ class SigninDialog extends React.Component {
   constructor (props) {
     super(props)
     const { signin, login, travelDate, searchQuery } = SearchAppBarStore.getState()
-    this.state = { signin, login }
+    this.state = { signin, login, travelDate, searchQuery }
   }
 
   componentDidMount () {

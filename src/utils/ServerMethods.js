@@ -48,7 +48,7 @@ const postItinerary = (itinerary) => {
 const getUser = (user) => {
   return fetch(`/users/${user.username}/${user.password}`)
     .then((res) => res.json())
-    .catch((err) => console.log(err))
+    .catch((error) => console.log(error))
 }
 
 const getAllUsers = () => {
@@ -72,7 +72,7 @@ const patchUser = (user) => {
       'Content-Type': 'application/json'
     }
   })
-    .then((res) => res.json()) // TODO: improve
+    .then((res) => res.json())
     .catch((error) => {
       console.log(error)
     })
@@ -87,7 +87,7 @@ const deleteUser = (user) => {
       'Content-Type': 'application/json'
     }
   })
-    .then((res) => res.json()) // TODO: improve
+    .then((res) => res.json())
     .catch((error) => {
       console.log(error)
     })
@@ -106,7 +106,6 @@ const login = (user) => {
       res.json()
         .then((json) => ({ status: res.status, ...json }))
     ))
-    //.catch((err) => err)
 }
 
 const logout = () => {

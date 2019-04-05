@@ -2,6 +2,7 @@ import React from 'react'
 import TextField from '@material-ui/core/TextField'
 import { withStyles } from '@material-ui/core/styles'
 import DateFnsUtils from '@date-io/date-fns'
+import Typography from '@material-ui/core/Typography';
 import { MuiPickersUtilsProvider, DatePicker } from 'material-ui-pickers'
 
 import AdminStore from './AdminStore'
@@ -19,6 +20,9 @@ const styles = theme => ({
     position: 'absolute',
     right: 0,
     margin: 10
+  },
+  locationLabel :{
+    margin: [[10, 0, 0, 0]]
   }
 })
 
@@ -66,6 +70,14 @@ class UserInfo extends React.Component {
           ? loading
           : (
               <div className={classes.infoLayout}>
+                <TextField
+                  disabled={!editModeOn}
+                  multiline
+                  label="Full Name"
+                  value={fullName}
+                  margin='normal'
+                  onChange={this.updateFullName}
+                  />
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <DatePicker
                     margin='normal'
@@ -80,18 +92,13 @@ class UserInfo extends React.Component {
                     onChange={this.updateBirthday}
                   />
                 </MuiPickersUtilsProvider>
+                <Typography variant="caption" gutterBottom className={classes.locationLabel}>
+                   Location
+                 </Typography>
                 <Autocomplete
                   page='admin'
                   searchQuery={location}
                   disabled={!editModeOn} />
-                <TextField
-                  disabled={!editModeOn}
-                  multiline
-                  label="Full Name"
-                  value={fullName}
-                  margin='normal'
-                  onChange={this.updateFullName}
-                  />
                 <TextField
                   disabled={!editModeOn}
                   multiline
@@ -102,7 +109,6 @@ class UserInfo extends React.Component {
                 />
             </div>
           )
-
     )
   }
 }

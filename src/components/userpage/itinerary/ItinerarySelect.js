@@ -9,6 +9,7 @@ import { format } from 'date-fns'
 
 import ItineraryActions from './ItineraryActions'
 import RecommendationsStore from '../recommendations/RecommendationsStore'
+import UserStore from '../../UserStore'
 
 const styles = theme => ({
   root: {
@@ -25,7 +26,9 @@ const styles = theme => ({
 class ItinerarySelect extends React.Component {
   loadItinerary (event) {
     const index = event.target.value
-    const { recommendations, fetchedRecommendations } = RecommendationsStore.getState() // quick and dirty
+    const { recommendations, fetchedRecommendations } = RecommendationsStore.getState()
+    const { user: { location } } = UserStore.getState()
+
     if (isNaN(index)) return
     // user has no itineraries
     if (index < 0) {
@@ -34,7 +37,7 @@ class ItinerarySelect extends React.Component {
           events: [],
           name: 'Itinerary',
           date: Date.now(),
-          location: '' // TODO: get this from another store from finnbarr's branch
+          location
         },
         selected: -1,
         rec: { recommendations, fetchedRecommendations }

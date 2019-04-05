@@ -39,10 +39,10 @@ const AdminActions = {
           value: { open: true, message: `Password changed!` }
         })
       })
-      .catch((err) => {
+      .catch((error) => {
         dispatcher.dispatch({
           type: ActionTypes.ADMIN_TOGGLE_SNACKBAR,
-          value: { open: true, message: `Changes not saved! ${err}` }
+          value: { open: true, message: `Changes not saved! ${error}` }
         })
       })
   },
@@ -73,7 +73,7 @@ const AdminActions = {
     })
   },
 
-  deleteUserDialogSubmit (user) { // WORKING
+  deleteUserDialogSubmit (user) {
     deleteUser(user)
       .then((res) => {
         dispatcher.dispatch({
@@ -91,10 +91,10 @@ const AdminActions = {
             })
           })
       })
-      .catch((err) => {
+      .catch((error) => {
         dispatcher.dispatch({
           type: ActionTypes.ADMIN_TOGGLE_SNACKBAR,
-          value: { open: true, message: `Changes not saved! ${err}` }
+          value: { open: true, message: `Changes not saved! ${error}` }
         })
       })
   },
@@ -171,19 +171,13 @@ const AdminActions = {
 
   startLoad () {
     return getAllUsers().then((res) => {
-      console.log (res)
       dispatcher.dispatch({
         type: ActionTypes.ADMIN_USER_LOAD,
         value: res
       })
       return Promise.resolve()
-      // dispatcher.waitFor([searchappbarStore.dispatcherToken])
-    }).catch((err) => {
-      console.log(err)
-    })
-    // dispatcher.dispatch({
-    //   type: ActionTypes.ADMIN_USER_LOAD
-    // })
+    }).catch((error) => console.log(error))
+
   },
 
   changeUserDisplayed (user) {
